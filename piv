@@ -1,0 +1,16 @@
+#! /bin/sh
+
+[ -z "$1" ] && sxiv -bfr /tmp/piv/* || \
+[ "$1" = "-h" ] && echo '| $1 = "file" = "Open File"		       |
+| $1 = "-h"   = "Show Help"		       |
+| $1 = ""     = "Last File" and/or "Show Help" |
+| $2 = "-r"   = "Rotate Display Left" 	       |' && exit
+
+
+mkdir /tmp/piv 2>/dev/null || rm -r /tmp/piv/*
+
+unzip -LL "*$1*" *.jpg *.png *.jpeg -d /tmp/piv >/dev/null
+
+[ "$2" = "-r" ] && xrandr --output eDP1 --rotate left && sxiv -bfr /tmp/piv/* && xrandr --output eDP1 --rotate normal
+
+sxiv -bfr /tmp/piv/*

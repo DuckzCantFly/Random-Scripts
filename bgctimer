@@ -1,0 +1,7 @@
+#!/bin/sh
+
+sleep "$(cat)"m
+
+echo "$(cat)"m
+
+bgc

@@ -1,0 +1,19 @@
+#! /bin/sh
+
+rm -vI $* && exit
+
+echo "Preform "rmdir $*" instead? "
+
+read -r -p '[y/N]: ' RMDYN
+
+[ "$RMDYN" = "${RMDYN#[Yy]}" ] && echo "rmdir $* canceled" && exit
+
+rmdir $* && echo "Removed Directory"  && exit
+
+echo "Preform "rm -r $*"  insted? "
+
+read -r -p '[y/N]: ' RMRYN
+
+[ "$RMRYN" != "${RMRYN#[Yy]}" ] && rm -r $* && echo "Removed Directory and Contsents"  && exit
+
+echo "rm -r $* canceled"
