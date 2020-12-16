@@ -4,9 +4,15 @@ cd ~/dl/zipper
 
 mv ../*.zip .
 
-[ -z "$1" ] && unzip '*.zip' && exit
+func unzip_d () {
+    zipfile="$1"
+    zipdir=${1%.zip}
+    unzip -d "$zipdir" "$zipfile"
+}
 
-[ "$1" = "nc" ] && unzip -P 'thatnovelcorner.com' '*.zip' && underscored && exit
+[ -z "$1" ] && unzid_d '*.zip' && exit
+
+[ "$1" = "nc" ] && unzip_d -P 'thatnovelcorner.com' '*.zip' && underscored && exit
 
 [ "$1" = "p" ] &&\
 	if [ -z "$2" ]
@@ -14,4 +20,4 @@ mv ../*.zip .
 		read -r -p 'Password:' PASS
 	else
 		PASS=$2
-	fi && unzip -P $PASS '*.zip' && exit
+	fi && unzip_d -P $PASS '*.zip' && exit
