@@ -4,10 +4,11 @@ cd ~/dl/zipper
 
 mv ../*.zip .
 
-func unzip_d () {
-    zipfile="$1"
-    zipdir=${1%.zip}
-    unzip -d "$zipdir" "$zipfile"
+unzip_d () {
+	unzip
+#	zipfile="$1"
+#	zipdir=${1%.zip}
+#	unzip -d "$zipdir" 		"$zipfile"
 }
 
 [ -z "$1" ] && unzid_d '*.zip' && exit
