@@ -1,23 +1,25 @@
 #! /bin/sh
 
+EPUBSTORAGE="/tmp/epr"
+
 OpenEpub() {
 	fold -s -w $(tput cols) /tmp/epr/$EPUBNAME | less
 }
 
-ls /tmp/epr > /dev/null || mkdir /tmp/epr
+ls $EPUBSTORAGE > /dev/null || mkdir $EPUBSTORAGE
 
-[ -z "$1" ] && EPUBNAME=$(cat /tmp/epr/lastName) && OpenEpub ||\
+[ -z "$1" ] && EPUBNAME=$(cat ls $EPUBSTORAGE/lastName) && OpenEpub ||\
 [ "$1" = "-h" ] && echo '| $1 = "file" = "Open File"		       |
 | $1 = "-h"   = "Show Help"		       |
 | $1 = ""     = "Last File" and/or "Show Help" |' && exit
 
 EPUBPATH="$(readlink -f *$1*)"
-EPUBNAME="$(echo $(basename $EPUBPATH ) | sed -e 's/\.[^.]*$/.txt/')"
+EPUBNAME="$(echo $(basename "$EPUBPATH" ) | sed -e 's/\.[^.]*$/.txt/')"
 
-ls /tmp/epr/ | grep $EPUBNAME && OpenEpub && exit
+ls $EPUBSTORAGE | grep $EPUBNAME && OpenEpub && exit
 
-echo "$EPUBNAME" > /tmp/epr/lastName
+echo "$EPUBNAME" > $EPUBSTORAGE/lastName
 
-epub2txt -w 0 $EPUBPATH > /tmp/epr/$EPUBNAME
+epub2txt -w 0 "$EPUBPATH" > $EPUBSTORAGE/$EPUBNAME
 
 OpenEpub
