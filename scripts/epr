@@ -14,12 +14,12 @@ ls $EPUBSTORAGE > /dev/null || mkdir $EPUBSTORAGE
 | $1 = ""     = "Last File" and/or "Show Help" |' && exit
 
 EPUBPATH="$(readlink -f *$1*)"
-EPUBNAME="$(echo $(basename "$EPUBPATH" ) | sed -e 's/\.[^.]*$/.txt/')"
+EPUBNAME="$(echo $(basename $EPUBPATH ) | sed -e 's/\.[^.]*$/.txt/')"
 
 ls $EPUBSTORAGE | grep $EPUBNAME && OpenEpub && exit
 
 echo "$EPUBNAME" > $EPUBSTORAGE/lastName
 
-epub2txt -w 0 "$EPUBPATH" > $EPUBSTORAGE/$EPUBNAME
+epub2txt -w 0 $EPUBPATH > $EPUBSTORAGE/$EPUBNAME
 
 OpenEpub

@@ -30,7 +30,7 @@ Also this saves all every file you previously opened to /tmp/epr by default for 
 	* and some other stuff you probably have installed already
 
 ## underscored
-A little script I stole from stack exchange or somthing, that replaces spaces with underscores. Its amazing so I have to put it here but i dont clame it as mine but its so short I dont think it really matters just use it and be wowed.
+A little script I stole from stack exchange or something, that replaces spaces with underscores. Its amazing, so I have to put it here but i don't clam it as mine but its so short I don't think it really matters just use it and be wowed.
 
 ## rot
 Easly rotate screen from the cmdline using xrander.
