@@ -5,10 +5,10 @@ kill \ $(pgrep bgctimer$)
 
 # Set time
 DN=$(date '+%-H')
-#DN=5
+#DN=9
 # Set Month
-#TY=$(date '+%m')
-TY=12
+TY=$(date '+%m')
+#TY=3
 # Set Date
 DM=$(date '+%e')
 #DM=1
@@ -16,7 +16,7 @@ DM=$(date '+%e')
 # Time of year
 if [ $TY -ge 3 ] && [ $TY -lt 6 ]
 then
-	SZN='spng'
+	SZN='sprg'
 elif [ $TY -ge 6 ] && [ $TY -lt 9 ]
 then
 	SZN='sumr'
@@ -43,6 +43,6 @@ fi
 
 # Run commands
 
-[ -n "$1" ] && ln -sf "$(readlink -f "$1")" $HOME/.local/share/bgc/$SZN/$VBG ; $HOME/.local/bin/setbg $HOME/.local/share/bgc/$SZN/$VBG
+[ -n "$1" ] && ln -sf "$(readlink -f "$1")" $HOME/bgc/$SZN/$VBG ; $HOME/.local/bin/setbg $XDG_DATA_HOME/bgc/$SZN/$VBG
 
 echo $TETBG | bgctimer
