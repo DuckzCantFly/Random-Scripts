@@ -1,62 +1,45 @@
 #!/bin/sh
 
 # Kill old timer
-kill \ $(pgrep bgctimer$)
-
-###
-
-# Set time
-DN=$(date '+%-H')
-# DN=11
-
-# Set Month
-TY=$(date '+%m')
-#TY=3
-
-# Set Date
-DM=$(date '+%e')
-#DM=1
-
-###
-
+	kill \ $(pgrep bgctimer$)
+# grab the time
+	# | DN=Hour | TY=Month | DM=Date |
+	DN=$(date '+%-H')
+	TY=$(date '+%m')
+	DM=$(date '+%e')
 # Time of year
-if [ $TY -ge 3 ] && [ $TY -lt 6 ]
-then
-	SZN='sprg'
-elif [ $TY -ge 6 ] && [ $TY -lt 9 ]
-then
-	SZN='sumr'
-elif [ $TY -ge 9 ] && [ $TY -lt 12 ]
-then
-	[ $TY == 10 ] \
-		&& SZN='hldy/hlwn' \
-		|| SZN='fall'
-else
-	[ $TY == 12 ] && [ $DM -lt 25 ] \
-		&& SZN='hldy/crms' \
-		|| SZN='wntr'
-fi
-
+	if [ $TY -ge 3 ] && [ $TY -lt 6 ]
+	then
+		SZN='sprg'
+	elif [ $TY -ge 6 ] && [ $TY -lt 9 ]
+	then
+		SZN='sumr'
+	elif [ $TY -ge 9 ] && [ $TY -lt 12 ]
+	then
+		[ $TY == 10 ] \
+			&& SZN='hldy/hlwn' \
+			|| SZN='fall'
+	else
+		[ $TY == 12 ] && [ $DM -lt 25 ] \
+			&& SZN='hldy/crms' \
+			|| SZN='wntr'
+	fi
 # Find current 1/4 andset vars
-if [ $DN -ge 4 ] && [ $DN -lt 9 ]
-then
-	VBG=mbg && TETBG=$(( (9-$DN)*60-$(date '+%-M') ))
-elif [ $DN -ge 9 ] && [ $DN -lt 16 ]
-then
-	VBG=dbg && TETBG=$(( (16-$DN)*60-$(date '+%-M') ))
-elif [ $DN -ge 16 ] && [ $DN -lt 20 ]
-then
-	VBG=ebg && TETBG=$(( (20-$DN)*60-$(date '+%-M') ))
-else
-	VBG=nbg && [ $DN -ge 20 ] \
-		&& TETBG=$(( (28-$DN)*60-$(date '+%-M') )) \
-		|| TETBG=$(( (4-$DN)*60-$(date '+%-M') ))
-fi
-
+	if [ $DN -ge 4 ] && [ $DN -lt 9 ]
+	then
+		VBG=mbg && TETBG=$(( (9-$DN)*60-$(date '+%-M') ))
+	elif [ $DN -ge 9 ] && [ $DN -lt 16 ]
+	then
+		VBG=dbg && TETBG=$(( (16-$DN)*60-$(date '+%-M') ))
+	elif [ $DN -ge 16 ] && [ $DN -lt 20 ]
+	then
+		VBG=ebg && TETBG=$(( (20-$DN)*60-$(date '+%-M') ))
+	else
+		VBG=nbg && [ $DN -ge 20 ] \
+			&& TETBG=$(( (28-$DN)*60-$(date '+%-M') )) \
+			|| TETBG=$(( (4-$DN)*60-$(date '+%-M') ))
+	fi
 # Run commands
-
-[ -n "$1" ] && ln -sf "$(readlink -f "$1")" $XDG_DATA_HOME/bgc/$SZN/$VBG
-
-$HOME/.local/bin/setbg $XDG_DATA_HOME/bgc/$SZN/$VBG
-
-echo $TETBG | bgctimer
+	[ -n "$1" ] && ln -sf "$(readlink -f "$1")" $XDG_DATA_HOME/bgc/$SZN/$VBG
+	$HOME/.local/bin/setbg $XDG_DATA_HOME/bgc/$SZN/$VBG
+	echo $TETBG | bgctimer

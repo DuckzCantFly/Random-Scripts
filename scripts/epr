@@ -1,25 +1,24 @@
 #! /bin/sh
 
-EPUBSTORAGE="/tmp/epr"
-
-OpenEpub() {
-	fold -s -w $(tput cols) /tmp/epr/$EPUBNAME | less
-}
-
-ls $EPUBSTORAGE > /dev/null || mkdir $EPUBSTORAGE
-
-[ -z "$1" ] && EPUBNAME=$(cat ls $EPUBSTORAGE/lastName) && OpenEpub ||\
-[ "$1" = "-h" ] && echo '| $1 = "file" = "Open File"		       |
-| $1 = "-h"   = "Show Help"		       |
-| $1 = ""     = "Last File" and/or "Show Help" |' && exit
-
-EPUBPATH="$(readlink -f *$1*)"
-EPUBNAME="$(echo $(basename $EPUBPATH ) | sed -e 's/\.[^.]*$/.txt/')"
-
-ls $EPUBSTORAGE | grep $EPUBNAME && OpenEpub && exit
-
-echo "$EPUBNAME" > $EPUBSTORAGE/lastName
-
-epub2txt -w 0 $EPUBPATH > $EPUBSTORAGE/$EPUBNAME
-
-OpenEpub
+# Storage dir:
+	EPUBSTORAGE="/tmp/epr"
+	EPUBFILES=$(ls $EPUBSTORAGE) || mkdir $EPUBSTORAGE
+# Opening funct:
+	OpenEpub() {
+		fold -s -w $(tput cols) /tmp/epr/$EPUBNAME | less
+	}
+# Open last and help
+	[ -z "$1" ] && EPUBNAME=$(cat $EPUBSTORAGE/lastName) && OpenEpub ||\
+	[ "$1" = "-h" ] && echo -e \
+	' | $1 = "file" = "Open File"		       	|\n'\
+	'| $1 = "-h"   = "Show Help"		       	|\n'\
+	'| $1 = ""     = "Last File" and/or "Show Help"	|' && exit
+# Set up vars
+	EPUBPATH="$(readlink -f *$1*)"
+	EPUBNAME="$(echo $(basename $EPUBPATH ) | sed -e 's/\.[^.]*$/.txt/')"
+	echo "$EPUBNAME" > $EPUBSTORAGE/lastName
+# Open last
+	echo $EPUBFILES | grep $EPUBNAME && OpenEpub && exit
+# Make new and open
+	epub2txt -w 0 $EPUBPATH > $EPUBSTORAGE/$EPUBNAME
+	OpenEpub
