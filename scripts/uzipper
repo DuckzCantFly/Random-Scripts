@@ -11,7 +11,7 @@ mv ../*.zip .
 #	unzip -d "$zipdir" 		"$zipfile"
 #}
 
-[ -z "$1" ] && unzid '*.zip' && exit
+[ -z "$1" ] && unzip '*.zip' && exit
 
 [ "$1" = "nc" ] && unzip -P 'thatnovelcorner.com' '*.zip' && underscored && exit
 
