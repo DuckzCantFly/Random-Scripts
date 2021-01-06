@@ -2,6 +2,6 @@
 
 sleep "$(cat)"m
 
-echo "$(cat)"m
+#echo "$(cat)"m
 
 bgc

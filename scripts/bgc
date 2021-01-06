@@ -42,4 +42,4 @@
 # Run commands
 	[ -n "$1" ] && ln -sf "$(readlink -f "$1")" $XDG_DATA_HOME/bgc/$SZN/$VBG
 	$HOME/.local/bin/setbg $XDG_DATA_HOME/bgc/$SZN/$VBG
-	echo $TETBG | bgctimer
+	echo $TETBG | $HOME/.local/bin/bgctimer
