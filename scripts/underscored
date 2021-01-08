@@ -1,16 +1,27 @@
 #!/bin/sh
 
-for f in *
-do
-  new="${f// /_}"
-  if [ "$new" != "$f" ]
-  then
-    if [ -e "$new" ]
-    then
-      echo not renaming \""$f"\" because \""$new"\" already exists
-    else
-      echo moving "$f" to "$new"
-    mv "$f" "$new"
-  fi
-fi
-done
+# funct
+Unscrer(){
+	for f in *
+	do
+		new="${f// /_}"
+		[ "$new" != "$f" ] && \
+		if [ -e "$new" ]
+		then
+			echo not renaming \""$f"\" because \""$new"\" already exists
+		else
+			mv "$f" "$new" && echo moving "$f" to "$new"
+		fi
+	done
+}
+# run
+	[ "$1" = "-R" ] && $(\
+		SDIR="$(pwd)"
+		NDIRS="$(find -type d)"
+		for CDIR in $NDIRS
+		do
+			cd $SDIR
+			cd $CDIR
+			Unscrer
+		done ; exit)
+	Unscrer
