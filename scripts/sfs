@@ -30,14 +30,10 @@
 		done
 	}
 # Run everything
-	mkdir $SFSMNT 2> /dev/null && MkSfsDir && SUSfs && exit
-
-	if [ -z "$1" ]
-	then
-		KlSfs ; SUSfs || KlSfs
-	elif [ "$1" != "-k" ]
-	then
-		KlSfs ; MkSfsDir && SUSfs || KlSfs
-	else
-		KlSfs || echo "Nothing to do"
-	fi
+	mkdir $SFSMNT 2> /dev/null && $(
+		MkSfsDir && SUSfs) && exit
+	[ -z "$1" ] && $(
+		KlSfs ; SUSfs)&& exit
+	[ "$1" != "-k" ] && $(
+		KlSfs ; MkSfsDir && SUSfs) && exit
+	KlSfs || echo "Nothing to do"
