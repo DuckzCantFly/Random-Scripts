@@ -57,3 +57,11 @@ a very simple timer using termdown
 	* termdown
 	* lolcat *so it looks less boring*
 	* paplay
+## lim
+waraper for less with proper word wraping
+## sfs
+wraper for sshfs that lets you quickly mount and unmount remote known file systems quickly
+### usage
+	no argument, start/restart all remote file systems 
+	-k kill running remote file systems and unmount them
+	$1,$2,$n add new remote file system listed in ~/.ssh/config
