@@ -2,13 +2,13 @@
 
 # Setup vars
 	# Data home
-	SFSMNT="/opt/sshfs-mnt"
+	SFSMNT="$HOME/.local/mnt"
 	SFSARGS="$@"
-	SDLOG="$(cat $SFSMNT/log)"
+	SDLOG=$SFSMNT/known_dir_log
 # Setup Functs
 	# Start up sshfs
 	SUSfs(){
-		for CSMADDR in $SDLOG
+		for CSMADDR in $(cat $SDLOG)
 		do
 			sshfs -o transform_symlinks $CSMADDR:/ $SFSMNT/$CSMADDR
 		done
@@ -17,13 +17,16 @@
 	MkSfsDir(){
 		for CMDIR in $SFSARGS
 		do
-			mkdir $SFSMNT/$CMDIR
-			echo $CMDIR >> $SFSMNT/log
+			SNADD=$(grep "^$CMDIR$" $SDLOG 2> /dev/null)
+			[ -z "$SNADD" ] \
+			&& mkdir $SFSMNT/$CMDIR \
+			&& echo $CMDIR >> $SDLOG \
+			|| echo "$SNADD already in log" >&2 
 		done
 	}
 	# Kill old prosses
 	KlSfs(){
-		for SDKL in $SDLOG
+		for SDKL in $(cat $SDLOG)
 		do
 			pkill -9 sshfs
 			fusermount -uzq $SFSMNT/$SDKL
