@@ -10,7 +10,7 @@
 	SUSfs(){
 		for CSMADDR in $SDLOG
 		do
-			sshfs $CSMADDR:/ $SFSMNT/$CSMADDR
+			sshfs -o transform_symlinks $CSMADDR:/ $SFSMNT/$CSMADDR
 		done
 	}
 	# Make new dirs for sshfs
