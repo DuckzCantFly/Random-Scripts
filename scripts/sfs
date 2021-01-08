@@ -1,0 +1,43 @@
+#!/bin/sh
+
+# Setup vars
+	# Data home
+	SFSMNT="/opt/sshfs-mnt"
+	SFSARGS="$@"
+	SDLOG="$(cat $SFSMNT/log)"
+# Setup Functs
+	# Start up sshfs
+	SUSfs(){
+		for CSMADDR in $SDLOG
+		do
+			sshfs $CSMADDR:/ $SFSMNT/$CSMADDR
+		done
+	}
+	# Make new dirs for sshfs
+	MkSfsDir(){
+		for CMDIR in $SFSARGS
+		do
+			mkdir $SFSMNT/$CMDIR
+			echo $CMDIR >> $SFSMNT/log
+		done
+	}
+	# Kill old prosses
+	KlSfs(){
+		for SDKL in $SDLOG
+		do
+			pkill -9 sshfs
+			fusermount -uz $SFSMNT/$SDKL
+		done
+	}
+# Run everything
+	mkdir $SFSMNT > /dev/null && MkSfsDir && SUSfs && exit
+
+	if [ -z "$1" ]
+	then
+		KlSfs ; SUSfs || KlSfs
+	elif [ "$1" != "-k" ]
+	then
+		KlSfs ; MkSfsDir && SUSfs || KlSfs
+	else
+		KlSfs
+	fi
