@@ -26,11 +26,11 @@
 		for SDKL in $SDLOG
 		do
 			pkill -9 sshfs
-			fusermount -uz $SFSMNT/$SDKL
+			fusermount -uzq $SFSMNT/$SDKL
 		done
 	}
 # Run everything
-	mkdir $SFSMNT > /dev/null && MkSfsDir && SUSfs && exit
+	mkdir $SFSMNT 2> /dev/null && MkSfsDir && SUSfs && exit
 
 	if [ -z "$1" ]
 	then
@@ -39,5 +39,5 @@
 	then
 		KlSfs ; MkSfsDir && SUSfs || KlSfs
 	else
-		KlSfs
+		KlSfs || echo "Nothing to do"
 	fi
