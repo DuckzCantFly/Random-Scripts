@@ -1,0 +1,11 @@
+#! /bin/sh
+
+# Storage dir:
+	EPUBSTORAGE="$XDG_DATA_HOME/epbthumb"
+	EPUBFILES=$(ls $EPUBSTORAGE) || mkdir $EPUBSTORAGE
+	EPUBPATH="$1"
+	EPUBNAME="$(echo $(basename $EPUBPATH ) | sed -e 's/\.[^.]*$/.jpeg/')"
+# Open last or make new & open
+	echo $EPUBFILES | grep $EPUBNAME &> /dev/null \
+		|| epub-thumbnailer "$EPUBPATH" "$EPUBSTORAGE/$EPUBNAME" 720
+	echo $EPUBSTORAGE/$EPUBNAME
