@@ -16,11 +16,11 @@
 		SZN='sumr'
 	elif [ $TY -ge 9 ] && [ $TY -lt 12 ]
 	then
-		[ $TY == 10 ] \
+		[ $TY = 10 ] \
 			&& SZN='hldy/hlwn' \
 			|| SZN='fall'
 	else
-		[ $TY == 12 ] && [ $DM -lt 25 ] \
+		[ $TY = 12 ] && [ $DM -lt 25 ] \
 			&& SZN='hldy/crms' \
 			|| SZN='wntr'
 	fi
