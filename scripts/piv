@@ -1,16 +1,33 @@
 #! /bin/sh
 
+
+# Storage dir:
+	EPUBSTORAGE="$XDG_DATA_HOME/piv"
+	EPUBFILES=$(ls $EPUBSTORAGE) || mkdir $EPUBSTORAGE
+# Opening funct:
+	OpenEpub() {
+		sxiv -bfr $EPUBSTORAGE/$EPUBNAME
+	}
 # Open last and help
-    [ -z "$1" ] && sxiv -bfr /tmp/piv/* || \
-    [ "$1" = "-h" ] && echo -e \
-    ' | $1 = "file" = "Open File"		        |\n'\
-    '| $1 = "-h"   = "Show Help"		        |\n'\
-    '| $1 = ""     = "Last File" and/or "Show Help" |\n'\
-    '| $2 = "-r"   = "Rotate Display Left"          |' && exit
-# Set up files
-    mkdir /tmp/piv 2>/dev/null || rm -r /tmp/piv/*
-    unzip -LL "*$1*" *.jpg *.png *.jpeg -d /tmp/piv >/dev/null
-# Rotate
-    [ "$2" = "-r" ] && xrandr --output eDP1 --rotate left && sxiv -bfr /tmp/piv/* && xrandr --output eDP1 --rotate normal && exit
-# Run
-    sxiv -bfr /tmp/piv/*
+	[ -z "$1" ] && EPUBNAME=$(cat $EPUBSTORAGE/lastName) && OpenEpub ||\
+	[ "$1" = "-h" ] && echo -e \
+	' | $1 = "file" = "Open File"		       	|\n'\
+	'| $1 = "--fp" = "Use when providing full path"	|\n'\
+	'| $1 = "-h"   = "Show Help"		       	|\n'\
+	'| $1 = ""     = "Last File" and/or "Show Help"	|' && exit
+# Set up vars
+	[ "$1" = "--fp" ] \
+		&& EPUBPATH="$2" \
+		|| EPUBPATH="$(readlink -f *$1*)"
+	EPUBNAME="$(echo $(basename $EPUBPATH ) | sed -e 's/\.[^.]*$//')"
+	echo "$EPUBNAME" > $EPUBSTORAGE/lastName
+# Open last or make new
+	echo $EPUBFILES | grep $EPUBNAME &> /dev/null \
+		|| unzip -LL  $EPUBPATH *.jpg *.png *.jpeg -d $EPUBSTORAGE/$EPUBNAME &> /dev/null
+# Rotate &open
+	[ "$2" = "-r" ] \
+		&& xrandr --output eDP1 --rotate left \
+		&& OpenEpub \
+		&& xrandr --output eDP1 --rotate normal \
+		&& exit
+	OpenEpub
