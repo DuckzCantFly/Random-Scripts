@@ -1,0 +1,37 @@
+#! /bin/sh
+
+# Open last and help
+	[ -z "$1" ] || [ "$1" = "-h" ] && echo -e \
+	' | $1 = "file"     = "Repack File"		     |\n'\
+	'| $1 = "--fp" 	   = "Use when providing full path" |\n'\
+	'| $1 = "-h" or "" = "Show Help"		    |' && exit
+
+# Storage dir:
+	EPUBSTORAGE="/tmp/pubrp"
+	mkdir $EPUBSTORAGE 2> /dev/null || rm -rf $EPUBSTORAGE/*
+
+# Set up vars
+	[ "$1" = "--fp" ] \
+		&& EPUBPATH="$2" \
+		|| EPUBPATH="$(readlink -f *$1*)"
+	EPUBNAME="$( echo $(basename $EPUBPATH ) | sed -e 's/\.[^.]*$//')"
+
+	unzip $EPUBPATH -d $EPUBSTORAGE/$EPUBNAME &> /dev/null
+
+	MTYPCASE=$( ls $EPUBSTORAGE/$EPUBNAME | grep -i mimetype)
+	METACASE=$( ls $EPUBSTORAGE/$EPUBNAME | grep -i META-INF)
+	EPUBFILES=$( ls $EPUBSTORAGE/$EPUBNAME | grep -iEv "$MTYPCASE|$METACASE" | tr '\n' '\t')
+
+	cd $EPUBSTORAGE/$EPUBNAME
+	rm $EPUBPATH
+
+	[ -n "$MTYPCASE" ] &&
+		$( tr -d '\n' < $MTYPCASE   > mimetype.1 \
+		&& tr -d '\r' < mimetype.1 > mimetype.2 \
+		&& rm mimetype mimetype.1 \
+		&& mv mimetype.2 $MTYPCASE \
+		; zip -0Xq $EPUBPATH $MTYPCASE)
+	[ -n "$METACASE" ] \
+		&& zip -Xr9Dq $EPUBPATH $METACASE
+	[ -n "$EPUBFILES" ] \
+		&& zip -Xr9Dq $EPUBPATH $EPUBFILES
