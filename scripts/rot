@@ -1,10 +1,10 @@
 #!/bin/sh
 
 # rotate
-    [ "$1" = "-n" ] && xrandr --output eDP1 --rotate normal && exit
-    [ "$1" = "-l" ] && xrandr --output eDP1 --rotate left && exit
-    [ "$1" = "-r" ] && xrandr --output eDP1 --rotate right && exit
-    [ "$1" = "-i" ] && xrandr --output eDP1 --rotate inverted && exit
-    [ -z "$1" ] && xrandr --output eDP1 --rotate normal
+    [ "$1" = "-n" ] && xrandr --output eDP-1 --rotate normal && exit
+    [ "$1" = "-l" ] && xrandr --output eDP-1 --rotate left && exit
+    [ "$1" = "-r" ] && xrandr --output eDP-1 --rotate right && exit
+    [ "$1" = "-i" ] && xrandr --output eDP-1 --rotate inverted && exit
+    [ -z "$1" ] && xrandr --output eDP-1 --rotate normal
 # help
     echo '| "" or "-n" = Normal | "-l" = Left | "-r" = Right | "-i" = Inverted |'
