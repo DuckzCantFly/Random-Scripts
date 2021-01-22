@@ -5,11 +5,9 @@
 	' | $1 = "file"     = "Repack File"		     |\n'\
 	'| $1 = "--fp" 	   = "Use when providing full path" |\n'\
 	'| $1 = "-h" or "" = "Show Help"		    |' && exit
-
 # Storage dir:
 	EPUBSTORAGE="/tmp/pubrp"
 	mkdir $EPUBSTORAGE 2> /dev/null || rm -rf $EPUBSTORAGE/*
-
 # Set up vars
 	[ "$1" = "--fp" ] \
 		&& EPUBPATH="$2" \
