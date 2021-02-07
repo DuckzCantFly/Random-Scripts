@@ -10,7 +10,8 @@
 	SUSfs(){
 		for CSMADDR in $(cat $SDLOG)
 		do
-			sshfs -o transform_symlinks $CSMADDR:/ $SFSMNT/$CSMADDR
+			Stest $CSMADDR && sshfs -o transform_symlinks $CSMADDR:/ $SFSMNT/$CSMADDR \
+				|| echo "$CSMADDR timed-out connecting" >&2
 		done
 	}
 	# Make new dirs for sshfs
@@ -18,25 +19,36 @@
 		for CMDIR in $SFSARGS
 		do
 			SNADD=$(grep "^$CMDIR$" $SDLOG 2> /dev/null)
-			[ -z "$SNADD" ] \
-			&& mkdir $SFSMNT/$CMDIR \
-			&& echo $CMDIR >> $SDLOG \
-			|| echo "$SNADD already in log" >&2 
+			if [ -z "$SNADD" ] ; then
+				Stest $CMDIR \
+					&& mkdir $SFSMNT/$CMDIR \
+					&& echo $CMDIR >> $SDLOG \
+					|| echo "$CMDIR timed-out so was not added" >&2
+			else
+			echo "$CMDIR is already in log" >&2
+			fi
 		done
 	}
 	# Kill old prosses
 	KlSfs(){
 		for SDKL in $(cat $SDLOG)
 		do
-			pkill -9 sshfs
-			fusermount -uzq $SFSMNT/$SDKL
+			$( pkill -9 sshfs
+			fusermount -uzq $SFSMNT/$SDKL ) && DIDSMTHN="y"
 		done
 	}
+	# test ssh connection
+	Stest(){
+		UPDWN=$(ssh -qo ConnectTimeout=4 $1 exit ; echo $?)
+		[ "$UPDWN" = "1" ] && return 0 || return 1
+	}
 # Run everything
-	mkdir $SFSMNT 2> /dev/null && $(
-		MkSfsDir && SUSfs) && exit
-	[ -z "$1" ] && $(
-		KlSfs ; SUSfs)&& exit
-	[ "$1" != "-k" ] && $(
-		KlSfs ; MkSfsDir && SUSfs) && exit
-	KlSfs || echo "Nothing to do"
+	 if mkdir $SFSMNT 2> /dev/null ; then
+		 MkSfsDir && SUSfs && exit
+	 elif [ -z "$1" ] ; then
+		 KlSfs ; SUSfs && exit
+	 elif [ "$1" != "-k" ] ; then
+		 KlSfs ; MkSfsDir && SUSfs && exit
+	 fi
+	KlSfs && exit
+	[ "$DIDSMTHN" != "y" ] && echo "Nothing to do"
