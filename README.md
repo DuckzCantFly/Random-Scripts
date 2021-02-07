@@ -45,9 +45,8 @@ A little mass unzipping script that uses unzip.
 ### Requires:
 	* uzip
 
-
 ## timer
-a very simple timer using termdown
+A very simple timer using termdown
 *does not currently come with chime sound, will get a good one I have full rights to later but it's easy to add your own in the meantime*
 ### usage
 	timer ss mm hh
@@ -57,11 +56,16 @@ a very simple timer using termdown
 	* termdown
 	* lolcat *so it looks less boring*
 	* paplay
+
 ## lim
-waraper for less with proper word wraping
+Waraper for less with proper word wraping
+
 ## sfs
-wraper for sshfs that lets you quickly mount and unmount remote known file systems quickly
+Wraper for sshfs that lets you quickly mount and unmount known remote file systems quickly
 ### usage
 	no argument, start/restart all remote file systems 
 	-k kill running remote file systems and unmount them
 	$1,$2,$n add new remote file system listed in ~/.ssh/config
+### Requires:
+	* sshfs
+	* procps-ng
