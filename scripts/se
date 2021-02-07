@@ -1,0 +1,21 @@
+#! /bin/zsh
+
+[ $1 = "-h" ] && echo '| $1 =    "c" 	 = Search "Config & Local Bin"   |
+| $1 =    "s" 	 = Search "$XDG_DATA_HOME"	 |
+| $1 =    "d"	 = Search "Documents & Downloads"|
+| $1 = "" or "0" = Search "~" 			 |
+| $2 = "Program" that opens the "File"		 |' && exit
+
+[ $1 = "c" ] && {du -a ~/.local/bin/* ~/.config/* $GTHB/DuckzCantFly/Random-Scripts/scripts/* | awk '{print $2}' | fzf | xargs -r $EDITOR ;} && exit
+
+[ $1 = "b" ] && {du -a /usr/bin/* | awk '{print $2}' | fzf | xargs -r $EDITOR ;} && exit
+
+[ $1 = "s" ] && {du -a $XDG_DATA_HOME/* | awk '{print $2}' | fzf | xargs -r $EDITOR ;} && exit
+
+
+[ $1 = "d" ] && OFILE=$(du -a ~/doc/* ~/dl/* | awk '{print $2}' | fzf)
+[ -z "$1" ] || [ $1 = "0" ] && OFILE=$(du -a ~/* | awk '{print $2}' | fzf)
+
+[ -z "$2" ] && echo "Program :" && read PRGM || PRGM=$2
+
+{echo $OFILE | xargs -r $PRGM ;}
