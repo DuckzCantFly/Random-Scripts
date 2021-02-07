@@ -8,14 +8,11 @@
 	TY=$(date '+%m')
 	DM=$(date '+%e')
 # Time of year
-	if [ $TY -ge 3 ] && [ $TY -lt 6 ]
-	then
+	if [ $TY -ge 3 ] && [ $TY -lt 6 ]	; then
 		SZN='sprg'
-	elif [ $TY -ge 6 ] && [ $TY -lt 9 ]
-	then
+	elif [ $TY -ge 6 ] && [ $TY -lt 9 ]	; then
 		SZN='sumr'
-	elif [ $TY -ge 9 ] && [ $TY -lt 12 ]
-	then
+	elif [ $TY -ge 9 ] && [ $TY -lt 12 ] 	; then
 		[ $TY = 10 ] \
 			&& SZN='hldy/hlwn' \
 			|| SZN='fall'
@@ -25,14 +22,11 @@
 			|| SZN='wntr'
 	fi
 # Find current 1/4 andset vars
-	if [ $DN -ge 4 ] && [ $DN -lt 9 ]
-	then
+	if [ $DN -ge 4 ] && [ $DN -lt 9 ]	; then
 		VBG=mbg && TETBG=$(( (9-$DN)*60-$(date '+%-M') ))
-	elif [ $DN -ge 9 ] && [ $DN -lt 16 ]
-	then
+	elif [ $DN -ge 9 ] && [ $DN -lt 16 ]	; then
 		VBG=dbg && TETBG=$(( (16-$DN)*60-$(date '+%-M') ))
-	elif [ $DN -ge 16 ] && [ $DN -lt 20 ]
-	then
+	elif [ $DN -ge 16 ] && [ $DN -lt 20 ]	; then
 		VBG=ebg && TETBG=$(( (20-$DN)*60-$(date '+%-M') ))
 	else
 		VBG=nbg && [ $DN -ge 20 ] \
