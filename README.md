@@ -58,10 +58,10 @@ A very simple timer using termdown
 	* paplay
 
 ## lim
-Waraper for less with proper word wraping
+Wrapper for less with proper word wrapping
 
 ## sfs
-Wraper for sshfs that lets you quickly mount and unmount known remote file systems quickly
+Wrapper for sshfs that lets you quickly mount and unmount known remote file systems quickly
 ### usage
 	no argument, start/restart all remote file systems 
 	-k kill running remote file systems and unmount them
