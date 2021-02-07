@@ -1,0 +1,6 @@
+#! /bin/sh
+
+pkill espeak-ng && exit
+
+[ "$1" = "-s" ] && $( xsel | espeak-ng -s 500 ; exit)
+[ "$1" = "-c" ] && $( xclip -selection clipboard -o | espeak-ng -s 500 ; exit)
