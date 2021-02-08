@@ -2,12 +2,10 @@
 
 # funct
 Unscrer(){
-	for f in *
-	do
+	for f in *	; do
 		new="${f// /_}"
 		[ "$new" != "$f" ] && \
-		if [ -e "$new" ]
-		then
+		if [ -e "$new" ]	; then
 			echo not renaming \""$f"\" because \""$new"\" already exists
 		else
 			mv "$f" "$new" && echo moving "$f" to "$new"
@@ -18,10 +16,8 @@ Unscrer(){
 	[ "$1" = "-R" ] && $(\
 		SDIR="$(pwd)"
 		NDIRS="$(find -type d)"
-		for CDIR in $NDIRS
-		do
-			cd $SDIR
-			cd $CDIR
+		for CDIR in $NDIRS ; do
+			cd $SDIR/$CDIR
 			Unscrer
 		done ; exit)
 	Unscrer

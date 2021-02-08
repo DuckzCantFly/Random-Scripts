@@ -9,8 +9,7 @@
 # Setup Functs
 	## Start up sshfs
 	SUSfs(){
-		for CSMADDR in $(cat $SDLOG)
-		do
+		for CSMADDR in $(cat $SDLOG) ; do
 			Stest $CSMADDR && sshfs -o transform_symlinks $CSMADDR:/ $SFSMNT/$CSMADDR \
 				|| echo "$CSMADDR timed-out connecting" >&2
 		done
@@ -18,8 +17,7 @@
 
 	## Make new dirs for sshfs
 	MkSfsDir(){
-		for CMDIR in $SFSARGS
-		do
+		for CMDIR in $SFSARGS ; do
 			SNADD=$(grep "^$CMDIR$" $SDLOG 2> /dev/null)
 			if [ -z "$SNADD" ] ; then
 				Stest $CMDIR \
@@ -34,8 +32,7 @@
 
 	## Kill old prosses
 	KlSfs(){
-		for SDKL in $(cat $SDLOG)
-		do
+		for SDKL in $(cat $SDLOG) ; do
 			$( pkill -9 sshfs
 			fusermount -uzq $SFSMNT/$SDKL ) && DIDSMTHN="y"
 		done
@@ -55,5 +52,4 @@
 	 elif [ "$1" != "-k" ] ; then
 		 KlSfs ; MkSfsDir && SUSfs && exit
 	 fi
-	KlSfs && exit
-	[ "$DIDSMTHN" != "y" ] && echo "Nothing to do"
+	KlSfs && exit ; [ "$DIDSMTHN" != "y" ] && echo "Nothing to do"

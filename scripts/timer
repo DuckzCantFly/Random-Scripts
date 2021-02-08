@@ -1,14 +1,11 @@
 #! /bin/sh
 
 # Parse time
-	if [ -z "$1" ]
-	then
+	if [ -z "$1" ]		; then
 		exit
-	elif [ -z "$2" ]
-	then
+	elif [ -z "$2" ]	; then
 		TIMER=$1
-	elif [ -z "$3" ]
-	then
+	elif [ -z "$3" ]	; then
 		TIMER=$(($1+$2*60))
 	else
 		TIMER=$(($1+$2*60+$3*3600))
@@ -17,8 +14,7 @@
 	termdown $TIMER | lolcat || exit
 # Ending
 	echo Timer Done
-	while true
-	do
+	while true 	; do
 		paplay /home/share/.asset/t_chime.wav
 		sleep .5
 	done
