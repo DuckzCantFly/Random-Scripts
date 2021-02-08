@@ -16,8 +16,7 @@ mv ../*.zip .
 [ "$1" = "nc" ] && unzip -P 'thatnovelcorner.com' '*.zip' && underscored && exit
 
 [ "$1" = "p" ] &&\
-	if [ -z "$2" ]
-	then
+	if [ -z "$2" ] ; then
 		read -r -p 'Password:' PASS
 	else
 		PASS=$2

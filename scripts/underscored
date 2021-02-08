@@ -5,7 +5,7 @@ Unscrer(){
 	for f in *	; do
 		new="${f// /_}"
 		[ "$new" != "$f" ] && \
-		if [ -e "$new" ]	; then
+		if [ -e "$new" ] ; then
 			echo not renaming \""$f"\" because \""$new"\" already exists
 		else
 			mv "$f" "$new" && echo moving "$f" to "$new"
