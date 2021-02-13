@@ -1,1 +1,11 @@
 #! /bin/sh
+
+# cant put this in the tmp dir for some retarded reason
+# DFLOC=/tmp/picospeaker-dwm.wav
+DFLOC=$XDG_DATA_HOME/svox_tmp_kus_this_pyghon_is_retarded/picospeaker-dwm.wav
+
+mkdir $XDG_DATA_HOME/svox_tmp_kus_this_pyghon_is_retarded
+
+picospeaker -r 175 -o $DFLOC ". $@"
+
+sleep 1 & mpv $DFLOC
