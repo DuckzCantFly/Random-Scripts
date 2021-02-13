@@ -1,5 +1,5 @@
 # Random-Scripts
-A collection of random scripts I use on my computer
+A collection of random scripts I use on my computer, in no order, at all.
 
 ## bgc
 Automatically switches background depending on time of day and season.
@@ -61,7 +61,7 @@ A very simple timer using termdown
 Wrapper for less with proper word wrapping
 
 ## sfs
-Wrapper for sshfs that lets you quickly mount and unmount known remote file systems quickly
+Awesome wrapper for sshfs that lets you quickly mount and unmount known remote file systems quickly
 ### usage
 	no argument, start/restart all remote file systems 
 	-k kill running remote file systems and unmount them
@@ -69,3 +69,27 @@ Wrapper for sshfs that lets you quickly mount and unmount known remote file syst
 ### Requires:
 	* sshfs
 	* procps-ng
+
+## mksh 
+small bootstrap script for writing shell scripts
+
+## epbthumb
+crapy un-readable script I use to get epub thumbnails in lf
+
+## etpr
+weird script for repackaging epr files smaller files no one but would use but me (better format for epub readers sometimes then standard epubs)
+
+## pubrp
+script for attempting to properly repackage epubs moving apple garbage to later in the file so it displays proper metadata and index first (only works fully sometimes)
+
+## rmd
+crappy wrapper for rm and rmdir, I don't even use, keep it for nostalgia, maybe I'll fix it one day
+
+## se 
+scrip I stole from Luke Smith and modified, so probably maybe might use a different license, I don't know or care, it's a wrapper for fzf. I would die without this on my computer.
+
+## tts
+scrip I use to get tts honestly only reason it's a thing is so, I don't have to recompile dwm if I want to tweak my tts.
+
+## tts2
+wrapper to fix svox arch package is its broken and I don't know enough python to patch it. Someone should though.
