@@ -1,0 +1,30 @@
+#! /bin/sh
+
+WKNBIN="$HOME/.local/bin"
+GHDIR="$GTHB/DuckzCantFly/Random-Scripts/scripts/"
+
+for TNSH in $@ ; do
+	NSH="$WKNBIN/$TNSH"
+
+	if [ -e "$NSH" ] ; then
+		echo "$TNSH already in $WKNBIN"
+		if [ -e "$GHDIR/$TNSH" ] ;then
+			echo "$TNSH already in $GHDIR"
+		else
+			echo "Linking $TNSH to $GHDIR/$TNSH"
+			ln $NSH $GHDIR
+		fi
+	elif [ -e "$GHDIR/$TNSH" ] ;then
+		echo "$TNSH already in $GHDIR"
+		echo "Linking $TNSH to $WKNBIN"
+		ln $GHDIR/$TNSH $WKNBIN
+	else
+	echo '#! /bin/sh
+
+' > $NSH
+
+	chmod 755 $NSH
+	ln $NSH $GHDIR
+	nvim $NSH
+	fi
+done
