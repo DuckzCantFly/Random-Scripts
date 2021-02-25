@@ -6,7 +6,7 @@
 | $1 = "" or "0" = Search "~" 			 |
 | $2 = "Program" that opens the "File"		 |' && exit
 
-[ $1 = "c" ] && {du -a ~/.local/bin/* ~/.config/* $GTHB/DuckzCantFly/Random-Scripts/scripts/* | awk '{print $2}' | fzf | xargs -r $EDITOR ;} && exit
+[ $1 = "c" ] && {du -a ~/.local/bin/* ~/.config/* $GH/DuckzCantFly/Random-Scripts/scripts/* | awk '{print $2}' | fzf | xargs -r $EDITOR ;} && exit
 
 [ $1 = "b" ] && {du -a /usr/bin/* | awk '{print $2}' | fzf | xargs -r $EDITOR ;} && exit
 
