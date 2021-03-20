@@ -1,10 +1,10 @@
 #! /bin/sh
 
 # Open last and help
-	[ -z "$1" ] || [ "$1" = "-h" ] && echo -e \
-	' | $1 = "file"     = "Repack File"		     |\n'\
-	'| $1 = "--fp" 	   = "Use when providing full path" |\n'\
-	'| $1 = "-h" or "" = "Show Help"		    |' && exit
+	[ -z "$1" ] || [ "$1" = "-h" ] && printf '%s\n' \
+	'| $1 = "file"     = "Repack File"		    |'\
+	'| $1 = "--fp" 	   = "Use when providing full path" |'\
+	'| $1 = "-h" or "" = "Show Help"			    |' && exit
 # Storage dir:
 	EPUBSTORAGE="/tmp/pubrp"
 	mkdir $EPUBSTORAGE 2> /dev/null || rm -rf $EPUBSTORAGE/*

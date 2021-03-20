@@ -2,11 +2,10 @@
 
 # Open last and help
 	if [ -z "$1" ] || [ "$1" = "-h" ] ; then
-		echo -e \
-		' | $1 = "file"     = "Repack File"		     |\n'\
-		'| $1 = "--fp" 	   = "Use when providing full path" |\n'\
-		'| $1 = "-h" or "" = "Show Help"		    |'
-		exit
+		printf '%s\n' \
+        	'| $1 = "file" 	   = "Repack File"			|'\
+        	'| $1 = "--fp" 	   = "Use when providing full path"	|'\
+        	'| $1 = "-h" or "" = "Show Help"				|' && exit
 	fi
 # Set up vars:
 	EPUBSTORAGE="$XDG_DATA_HOME/epr"

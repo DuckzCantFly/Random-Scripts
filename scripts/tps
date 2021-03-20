@@ -1,4 +1,4 @@
-#! /bin/bash
+#! /bin/sh
 
 TPNAME="SynPS/2 Synaptics TouchPad"
 STPSTAT=$(xinput list-props "$TPNAME")
@@ -18,7 +18,7 @@ TGLtp(){
 
 HLPmsg(){
 	for GBST in $TVNS ; do
-		GBDSTAT=$(echo "$STPSTAT" | grep "${!GBST} Enabled (")
+		GBDSTAT=$(echo "$STPSTAT" | grep "$(eval "echo \"\$$GBST\"") Enabled (")
 		[ "$(echo "$GBDSTAT" | tail -c 2)" = "1" ] \
 			&& eval "TG$GBST='On '"\
 			|| eval "TG$GBST='Off'"
@@ -26,13 +26,14 @@ HLPmsg(){
 	MSPD=$(echo "$STPSTAT"\
 		| grep "Coordinate Transformation Matrix"\
 		|cut -d ' ' -f12)
+	SDMP="x$(echo "scale=2;1/$MSPD" | bc)"
 
-	echo -e \
-		" | \$1 	   =  \"-h\" or \"--help\"  = Display help and status		    | \n"\
-		"| \$1 	   =  \"-k\" 		= Toggle $DEVE			Stat: $TGDEVE   | \n"\
-		"| \$1 	   =  \"-n\" 		= Toggle $NASE	Stat: $TGNASE   | \n"\
-		"| \$1	   =  \"-p\" 		= Toggle $DWTE	Stat: $TGDWTE   | \n"\
-		"| \$1 & \$2 =  \"-s (multiplier)\" = Set    Mouse Speed		Stat: x$(bc <<< "scale=2;1/$MSPD") | \n"
+	printf '%s\n' \
+		"| \$1 	   =  \"-h\" or \"--help\"  = 	   Display help and status	    |"\
+		"| \$1 	   =  \"-k\" 		= Toggle $DEVE			Stat: $TGDEVE   |"\
+		"| \$1 	   =  \"-n\" 		= Toggle $NASE	Stat: $TGNASE   |"\
+		"| \$1	   =  \"-p\" 		= Toggle $DWTE	Stat: $TGDWTE   |"\
+		"| \$1 & \$2  =  \"-s (multiplier)\" = Set    Mouse Speed		Stat: $SDMP |"
 
 	exit
 }
@@ -43,6 +44,6 @@ case  $1  in
 	"-k")	TGLtp "$DEVE" ;;
 	"-n") 	TGLtp "$NASE" ;;
 	"-p") 	TGLtp "$DWTE" ;;
-	"-s")	xinput --set-prop "$TPNAME" 'Coordinate Transformation Matrix' 1 0 0 0 1 0 0 0 $(bc <<< "scale=6;1/$2")	;;
+	"-s")	xinput --set-prop "$TPNAME" 'Coordinate Transformation Matrix' 1 0 0 0 1 0 0 0 $(echo "scale=6;1/$2" | bc) ;;
 	*) HLPmsg
 esac
