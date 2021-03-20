@@ -19,14 +19,13 @@ ln -sf $bgloc $HOME/.config/wall.png
 	&& ln -sf "$(find "$(readlink -f "$1")" -iregex '.*.\(jpg\|jpeg\|png\|gif\)' -type f | shuf -n 1)" "$bgloc" \
 	&& notify-send -i "$bgloc" "Random Wallpaper chosen."
 
-identify -format "%w %h" "${bgloc}" | read BGW BGH
-
 # If pywal is installed, use it.
 wal -i "$(readlink -f "$bgloc")" -o "${XDG_CONFIG_HOME:-$HOME/.config}/wal/postrun" >/dev/null 2>&1
 
 pidof dwm >/dev/null && xdotool key super+F12
 
-[ "$BGW" -ge "1920" -a "$BGH" -ge "1080" ] \
+BGDIM=$(identify -format "%w %h" "${bgloc}")
+[ "$(echo $BGDIM | cut -d ' ' -f1)" -ge "1920" -a "$(echo $BGDIM | cut -d ' ' -f2)" -ge "1080" ] \
 	&& xwallpaper --zoom "$bgloc" \
 	|| xwallpaper --maximize "$bgloc"
 
