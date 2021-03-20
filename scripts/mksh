@@ -1,30 +1,55 @@
-#! /bin/sh
+#! /bin/bash
+
+[ -z "$1" ] && exit
 
 WKNBIN="$HOME/.local/bin"
 GHDIR="$MGH/Random-Scripts/scripts/"
 
-for TNSH in $@ ; do
-	NSH="$WKNBIN/$TNSH"
+MKsh(){
+	for TNSH in $@ ; do
+		NSH="$WKNBIN/$TNSH"
 
-	if [ -e "$NSH" ] ; then
-		echo "$TNSH already in $WKNBIN"
-		if [ -e "$GHDIR$TNSH" ] ;then
+		if [ -e "$NSH" ] ; then
+			echo "$TNSH already in $WKNBIN"
+			if [ -e "$GHDIR$TNSH" ] ;then
+				echo "$TNSH already in $GHDIR"
+			else
+				echo "Linking $TNSH to $GHDIR$TNSH"
+				ln $NSH $GHDIR
+			fi
+		elif [ -e "$GHDIR$TNSH" ] ;then
 			echo "$TNSH already in $GHDIR"
+			echo "Linking $TNSH to $WKNBIN"
+			ln $GHDIR/$TNSH $WKNBIN
 		else
-			echo "Linking $TNSH to $GHDIR$TNSH"
-			ln $NSH $GHDIR
+		echo -e '#! /bin/sh' "\n \n" > $NSH
+
+		chmod 755 $NSH
+		ln $NSH $GHDIR
+		nvim $NSH
 		fi
-	elif [ -e "$GHDIR$TNSH" ] ;then
-		echo "$TNSH already in $GHDIR"
-		echo "Linking $TNSH to $WKNBIN"
-		ln $GHDIR/$TNSH $WKNBIN
-	else
-	echo '#! /bin/sh
+	done
+}
 
-' > $NSH
+RMsh(){
+	for TNSH in $@ ; do
+		rm -iv "$WKNBIN/$TNSH" "$GHDIR/$TNSH"
+	done
+}
+EDsh(){
+	for TNSH in $@ ; do
+		nvim "$WKNBIN/$TNSH"
+	done
+}
 
-	chmod 755 $NSH
-	ln $NSH $GHDIR
-	nvim $NSH
-	fi
-done
+MVsh(){
+	mv "$WKNBIN/$1" "$WKNBIN/$2"
+	mv "$GHDIR/$1" "$GHDIR/$2"
+}
+
+case $1 in
+	"-r")	shift ; RMsh "$@" ;;
+	"-m")	shift ; MVsh "$@" ;;
+	"-e")	shift ; EDsh "$@" ;;
+	*)	MKsh "$@"
+esac
