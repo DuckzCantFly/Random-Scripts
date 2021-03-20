@@ -1,15 +1,19 @@
 #! /bin/sh
 
 # Open last and help
-	[ -z "$1" ] || [ "$1" = "-h" ] && echo -e \
-	' | $1 = "file"     = "Repack File"		     |\n'\
-	'| $1 = "--fp" 	   = "Use when providing full path" |\n'\
-	'| $1 = "-h" or "" = "Show Help"		    |' && exit
+	if [ -z "$1" ] || [ "$1" = "-h" ] ; then
+		echo -e \
+		' | $1 = "file"     = "Repack File"		     |\n'\
+		'| $1 = "--fp" 	   = "Use when providing full path" |\n'\
+		'| $1 = "-h" or "" = "Show Help"		    |'
+		exit
+	fi
 # Set up vars:
 	EPUBSTORAGE="$XDG_DATA_HOME/epr"
+	[ -e $EPUBSTORAGE ] || mkdir $EPUBSTORAGE
 	ETRPOUT="$HOME/dl"
 	ETRPSTORAGE="/tmp/etrp"
-	EPUBFILES=$(ls $EPUBSTORAGE) || mkdir $EPUBSTORAGE
+	jPUBFILES=$(ls $EPUBSTORAGE) || mkdir $EPUBSTORAGE
 	[ "$1" = "--fp" ] \
 		&& EPUBPATH="$2" \
 		|| EPUBPATH="$(readlink -f *$1*)"
@@ -17,10 +21,13 @@
 	EPUBNAME="$(basename $EPUBPATH  | sed -e 's/\.[^.]*$/.txt/')"
 	SLPITLINE="200"
 # Make new
-	echo $EPUBFILES | grep $EPUBNAME &> /dev/null \
+	[ -e "$EPUBSTORAGE/$EPUBNAME" ] \
+	echo $EPUBFILES | grep $EPUBNAME 2>&1 /dev/null \
 		|| epub2txt -w 0 $EPUBPATH > $EPUBSTORAGE/$EPUBNAME
 # Repack everything
-	mkdir $ETRPSTORAGE 2>/dev/null || rm -rf $ETRPSTORAGE/*
+	[ -e $EPUBSTORAGE ] \
+		&& rm -rf $ETRPSTORAGE/* \
+		|| mkdir $ETRPSTORAGE 2>/dev/null
 	mkdir -p $ETRPSTORAGE/$ETRPNAME ; cd $ETRPSTORAGE/$ETRPNAME
 
 	split $EPUBSTORAGE/$EPUBNAME -l $SLPITLINE
