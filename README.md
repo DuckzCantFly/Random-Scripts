@@ -1,33 +1,66 @@
 # Random-Scripts
-A collection of random scripts I use on my computer, in no order, at all.
+A collection of random scripts I use on my computer.
+
+# Epub/Ebook Stuff 
+
+## epr
+Vary basic epub viewer for the terminal using epub2txt and less. This script breaks with spaces in file names, so use underscores instead and the script here named underscored can help with that!
+
+### Requires:
+	* epub2txt
+	* less
+	* and some other stuff you probably have installed already
+
+## piv
+Opens image files from epub in sxiv. This script breaks with spaces in file names, so use underscores instead and the script here named underscored can help with that!
+
+### Requires:
+	* sxiv
+	* unzip
+	* optionaly xrander for screen rotation
+	* and maybe some otherstuff
+
+## lim
+Wrapper for less with proper word wrapping
+
+## etpr
+Weird script for repackaging epubs as files as smaller zip files containing ordered raw text. No one would use this but me (better format for epub readers if epub was weirdly packaged originaly)
+### Requires:
+	* epub2txt
+
+## pubrp
+Script for attempting to properly repackage epubs moving apple garbage to later in the file, so it displays proper metadata with the index first (only works fully sometimes)
+
+## epbthumb
+Crappy un-readable script I use to get epub thumbnails in lf *you should ignore this*
+
+# Wallpeper & Theme
 
 ## bgc
 Automatically switches background depending on time of day and season.
 ### Requires:
 	* luke smiths script setbg
 	* my script bgctimer
-	* zsh, there is some weird behaviore adding numbers with floating zeros in bash so uses zsh instead
 	* and probably some other stuff i dont know about but you probably allready have
 *upgrading this massively and re-writing it in go*
 
 ## bgctimer
 Script needed for bgctimer.
 
-## piv
-Opens image files from epub in sxiv.
-### Requires:
-	* sxiv
-	* unzip
-	* optionaly xrander
-	* and maybe some otherstuff
+## setbg
+Modified versions of luke smiths setbg, with better ricing capability
+Also uses gplv3 kus luke smith is retarded and has horrible taste in license 
 
-## epr
-Vary basic epub viewer for the terminal using epub2txt and less. This breaks with spaces in file so use underscores instead and the script here named underscored can help with that!
-Also this saves all every file you previously opened to /tmp/epr by default for fast reopening, but obviously there all gone on system restart. So if you want to keep them you can change the argument for the first variable in the program EPUBSTORAGE="/tmp/epr" to something more permanent like "$HOME/books/txt" and everything should work the same 
+
+# Misc
+
+## tps
+Wraper for ximput to change trackpad settings faster, would be pretty easy to change into a wraper for any other devive
+
+## cpfp
+Little script to copy a file's path
 ### Requires:
-	* epub2txt
-	* less
-	* and some other stuff you probably have installed already
+	* xclip
 
 ## underscored
 A little script I stole from stack exchange or something and tweeked a bit, replaces spaces with underscores. Its amazing, so I have to put it here but i don't clam it as entirely mine but its so short I don't think it really matters just use it and be wowed.
@@ -35,7 +68,7 @@ A little script I stole from stack exchange or something and tweeked a bit, repl
 	-R targets all files and folders recursivly (might need to run a few times to catch all of em, is a little hacky)
 
 ## rot
-Easly rotate screen from the cmdline using xrander.
+Easily rotate screen from the cmdline using xrander.
 ### Requires:
 	* xrander
 	* maybe some other stuff
@@ -57,9 +90,6 @@ A very simple timer using termdown
 	* lolcat *so it looks less boring*
 	* paplay
 
-## lim
-Wrapper for less with proper word wrapping
-
 ## sfs
 Awesome wrapper for sshfs that lets you quickly mount and unmount known remote file systems quickly
 ### usage
@@ -71,25 +101,16 @@ Awesome wrapper for sshfs that lets you quickly mount and unmount known remote f
 	* procps-ng
 
 ## mksh 
-small bootstrap script for writing shell scripts
-
-## epbthumb
-crapy un-readable script I use to get epub thumbnails in lf
-
-## etpr
-weird script for repackaging epr files smaller files no one but would use but me (better format for epub readers sometimes then standard epubs)
-
-## pubrp
-script for attempting to properly repackage epubs moving apple garbage to later in the file so it displays proper metadata and index first (only works fully sometimes)
+Bootstraping script for writing shell scripts
 
 ## rmd
-crappy wrapper for rm and rmdir, I don't even use, keep it for nostalgia, maybe I'll fix it one day
+Crappy wrapper for rm and rmdir, I don't even use, keep it for nostalgia, maybe I'll fix it one day
 
 ## se 
-scrip I stole from Luke Smith and modified, so probably maybe might use a different license, I don't know or care, it's a wrapper for fzf. I would die without this on my computer.
+Scrip I stole from a Luke Smith vid and modified, so probably maybe might use a different license, I don't know or care, it's a wrapper for fzf. I would die without this on my computer.
 
 ## tts
-scrip I use to get tts honestly only reason it's a thing is so, I don't have to recompile dwm if I want to tweak my tts.
+Scrip I use to get tts honestly only reason it's a thing is so, I don't have to recompile dwm if I want to tweak my tts.
 
 ## tts2
-wrapper to fix svox arch package is its broken and I don't know enough python to patch it. Someone should though.
+Wrapper to fix svox arch package is its broken and I don't know enough python to patch it. Someone should though.

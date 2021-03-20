@@ -1,0 +1,5 @@
+#! /bin/sh
+
+# BROWSER='firefox --new-window'
+
+jupyter lab
