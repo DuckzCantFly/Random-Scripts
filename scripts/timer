@@ -13,8 +13,11 @@
 # Timer
 	termdown $TIMER | lolcat || exit
 # Ending
+	(
+	trap "echo interrupted.; exit 0" INT
 	echo Timer Done
 	while true 	; do
 		paplay /home/share/.asset/t_chime.wav
 		sleep .5
 	done
+	)
