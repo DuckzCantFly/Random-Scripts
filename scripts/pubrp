@@ -14,7 +14,7 @@
 		|| EPUBPATH="$(readlink -f *$1*)"
 	EPUBNAME="$( echo $(basename $EPUBPATH ) | sed -e 's/\.[^.]*$//')"
 
-	unzip $EPUBPATH -d $EPUBSTORAGE/$EPUBNAME &> /dev/null
+	unzip $EPUBPATH -d $EPUBSTORAGE/$EPUBNAME 2>&1 /dev/null
 
 	MTYPCASE=$( ls $EPUBSTORAGE/$EPUBNAME | grep -i mimetype)
 	METACASE=$( ls $EPUBSTORAGE/$EPUBNAME | grep -i META-INF)
