@@ -17,7 +17,7 @@ Unscrer(){
 		SDIR="$(pwd)"
 		NDIRS="$(find -type d)"
 		for CDIR in $NDIRS ; do
-			cd $SDIR/$CDIR
+			cd "$SDIR/$CDIR"
 			Unscrer
 		done ; exit)
 	Unscrer
