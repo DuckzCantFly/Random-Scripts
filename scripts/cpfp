@@ -1,0 +1,7 @@
+#! /bin/sh
+
+[ -z "$1" ] && exit
+
+CPFILE=$1
+
+readlink -f $CPFILE | tr -d '\n' | xclip -selection clipboard
