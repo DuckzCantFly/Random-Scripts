@@ -55,7 +55,7 @@ Also uses gplv3 kus luke smith is retarded and has horrible taste in license
 # Misc
 
 ## tps
-Wraper for ximput to change trackpad settings faster, would be pretty easy to change into a wraper for any other devive
+Wrapper for xinput to change trackpad settings faster, would be pretty easy to change into a wrapper for any other device
 
 ## cpfp
 Little script to copy a file's path
@@ -101,7 +101,7 @@ Awesome wrapper for sshfs that lets you quickly mount and unmount known remote f
 	* procps-ng
 
 ## mksh 
-Bootstraping script for writing shell scripts
+Bootstrapping script for writing shell scripts
 
 ## rmd
 Crappy wrapper for rm and rmdir, I don't even use, keep it for nostalgia, maybe I'll fix it one day
