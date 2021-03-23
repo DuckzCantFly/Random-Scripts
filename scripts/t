@@ -1,0 +1,12 @@
+#! /bin/sh
+
+python /home/share/doc/github/t/t.py --task-dir /home/share/doc/tsk --list tasks $@
+
+[ -n "$1" ] && case $@ in
+	"-e"|"--edit=*"|"-f"|"--finish=*"|"-r"|"--remove=*")
+		cpws-reset --reboot-conky ;;
+	"-h")	exit ;;
+	"-l"|"--list=*"|"-d"|"--task-dir=*"|"-d"|"--remove=*"|"-g"|"--grep=*"|"-q"|"--quiet=*"|"-v"|"--verbose=*")
+		;;
+	*) cpws-reset --reboot-conky
+esac
