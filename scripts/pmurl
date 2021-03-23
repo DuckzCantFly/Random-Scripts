@@ -1,0 +1,13 @@
+#! /bin/sh
+
+PMBROWSER="firefox"
+PMcmd(){
+	paru -Si $1
+}
+URLcmd(){
+	grep URL $@ | cut -d " " -f15
+}
+
+for PKGNAME in $@ ; do
+	$PMBROWSER "$( PMcmd $PKGNAME | URLcmd )"
+done
