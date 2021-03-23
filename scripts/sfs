@@ -47,10 +47,10 @@
 
 # Run everything
  if mkdir $SFSMNT 2> /dev/null ; then
-	 MkSfsDir && SUSfs && exit
+  MkSfsDir && SUSfs && exit
  elif [ -z "$1" ] ; then
-	 KlSfs ; SUSfs && exit
+  KlSfs ; SUSfs && exit
  elif [ "$1" != "-k" ] ; then
-	 KlSfs ; MkSfsDir && SUSfs && exit
+  KlSfs ; MkSfsDir && SUSfs && exit
  fi
  KlSfs && exit ; [ "$DIDSMTHN" != "y" ] && echo "Nothing to do"
