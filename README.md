@@ -23,7 +23,7 @@ Opens image files from epub in sxiv. This script breaks with spaces in file name
 ## lim
 Wrapper for less with proper word wrapping
 
-## etpr
+## etrp
 Weird script for repackaging epubs as files as smaller zip files containing ordered raw text. No one would use this but me (better format for epub readers if epub was weirdly packaged originaly)
 ### Requires:
 	* epub2txt
