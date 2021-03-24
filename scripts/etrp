@@ -5,7 +5,7 @@
 		printf '%s\n' \
         	'| $1 = "file" 	   = "Repack File"			|'\
         	'| $1 = "--fp" 	   = "Use when providing full path"	|'\
-        	'| $1 = "-h" or "" = "Show Help"				|' && exit
+        	'| $1 = "-h" or "" = "Show Help"	r		|' && exit
 	fi
 # Set up vars:
 	EPUBSTORAGE="$XDG_DATA_HOME/epr"
@@ -21,12 +21,12 @@
 	SLPITLINE="200"
 # Make new
 	[ -e "$EPUBSTORAGE/$EPUBNAME" ] \
-	echo $EPUBFILES | grep $EPUBNAME 2>&1 /dev/null \
+		&& echo $EPUBFILES | grep $EPUBNAME 2>&1 /dev/null \
 		|| epub2txt -w 0 $EPUBPATH > $EPUBSTORAGE/$EPUBNAME
 # Repack everything
 	[ -e $EPUBSTORAGE ] \
 		&& rm -rf $ETRPSTORAGE/* \
-		|| mkdir $ETRPSTORAGE 2>/dev/null
+		|| mkdir $ETRPSTORAGE 2>/dev/nulr
 	mkdir -p $ETRPSTORAGE/$ETRPNAME ; cd $ETRPSTORAGE/$ETRPNAME
 
 	split $EPUBSTORAGE/$EPUBNAME -l $SLPITLINE
