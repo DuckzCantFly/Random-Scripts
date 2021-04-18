@@ -22,7 +22,7 @@ ln -sf $BGLOC $HOME/.config/wall.png
 
 
 # If pywal is installed, use it.
-wal -i "$(readlink -f "$BGLOC")" -o "${XDG_CONFIG_HOME:-$HOME/.config}/wal/postrun" >/dev/null 2>&1 
+wal -i "$(readlink -f "$BGLOC")" -o "${XDG_CONFIG_HOME:-$HOME/.config}/wal/postrun" >/dev/null 2>&1
 
 pidof dwm >/dev/null && xdotool key super+F12
 
