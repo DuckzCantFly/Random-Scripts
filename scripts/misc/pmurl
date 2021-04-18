@@ -1,6 +1,9 @@
 #! /bin/sh
 
 PMBROWSER="firefox"
+[ -n "$1" ] \
+	&& ARGS="$@" \
+	|| ARGS=$(xclip -selection clipboard -o)
 PMcmd(){
 	paru -Si $1
 }
@@ -8,6 +11,6 @@ URLcmd(){
 	grep URL $@ | cut -d " " -f15
 }
 
-for PKGNAME in $@ ; do
+for PKGNAME in $ARGS ; do
 	$PMBROWSER "$( PMcmd $PKGNAME | URLcmd )"
 done
