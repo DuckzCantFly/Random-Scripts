@@ -1,22 +1,15 @@
 #! /bin/sh
 
 TPNAME="SynPS/2 Synaptics TouchPad"
-STPSTAT=$(xinput list-props "$TPNAME")
 TVNS="DEVE NASE DWTE"
 DEVE="Device"
-NASE="Natural Scrolling"
 DWTE="Disable While Typing"
+NASE="Natural Scrolling"
 
-TGLtp(){
-	GBDSTAT=$(echo "$STPSTAT" | grep "$1 Enabled (")
-	TGLID=$(echo "$GBDSTAT" | cut -d "(" -f2 | cut -d ")" -f1)
 
-	[ "$(echo "$GBDSTAT" | tail -c 2)" = "1" ] && TGLSTAT="0" || TGLSTAT="1"
-
-	xinput --set-prop "$TPNAME" $TGLID $TGLSTAT
-}
 
 HLPmsg(){
+	STPSTAT=$(xinput list-props "$TPNAME")
 	for GBST in $TVNS ; do
 		GBDSTAT=$(echo "$STPSTAT" | grep "$(eval "echo \"\$$GBST\"") Enabled (")
 		[ "$(echo "$GBDSTAT" | tail -c 2)" = "1" ] \
@@ -29,21 +22,55 @@ HLPmsg(){
 	SDMP="x$(echo "scale=2;1/$MSPD" | bc)"
 
 	printf '%s\n' \
-		"| \$1 	   =  \"-h\" or \"--help\"  = 	   Display help and status	    |"\
-		"| \$1 	   =  \"-k\" 		= Toggle $DEVE			Stat: $TGDEVE   |"\
-		"| \$1 	   =  \"-n\" 		= Toggle $NASE	Stat: $TGNASE   |"\
-		"| \$1	   =  \"-p\" 		= Toggle $DWTE	Stat: $TGDWTE   |"\
-		"| \$1 & \$2  =  \"-s (multiplier)\" = Set    Mouse Speed		Stat: $SDMP |"
+		"| -h --help			= 	   Display help and status	    |"\
+		"| -k --kill			= Toggle $DEVE			Stat: $TGDEVE   |"\
+		"| -p --play	 		= Toggle $DWTE	Stat: $TGDWTE   |"\
+		"| -n --natural			= Toggle $NASE	Stat: $TGNASE   |"\
+		"| -s --speed (multiplier)	= Set    Mouse Speed		Stat: $SDMP |"
 
-	exit
+}
+
+[ -z "$@" ] && HLPmsg && exit
+STPSTAT=$(xinput list-props "$TPNAME")
+
+TGLtp(){
+	GBDSTAT=$(echo "$STPSTAT" | grep "$1 Enabled (")
+	TGLID=$(echo "$GBDSTAT" | cut -d "(" -f2 | cut -d ")" -f1)
+
+	[ "$(echo "$GBDSTAT" | tail -c 2)" = "1" ] && TGLSTAT="0" || TGLSTAT="1"
+
+	xinput --set-prop "$TPNAME" $TGLID $TGLSTAT
+}
+
+TPspeed(){
+	if [ "$1" = '--' ] 				; then
+		SPDARG="1" && printf "No speed argument defaulting to 1 \n"
+	elif echo $1 | grep -Pq "^-?\d*\.?\d*$"	;then
+		SPDARG="$1"
+	else
+		SPDARG="1" && printf '%s\n' "Speed argument \"$1\" not floating point number defaulting to 1 \n"
+	fi
+
+	xinput --set-prop "$TPNAME" 'Coordinate Transformation Matrix' 1 0 0 0 1 0 0 0 $(echo "scale=6;1/$SPDARG" | bc)
 }
 
 
-case  $1  in
-	"-h"|"--help") HLPmsg ;;
-	"-k")	TGLtp "$DEVE" ;;
-	"-n") 	TGLtp "$NASE" ;;
-	"-p") 	TGLtp "$DWTE" ;;
-	"-s")	xinput --set-prop "$TPNAME" 'Coordinate Transformation Matrix' 1 0 0 0 1 0 0 0 $(echo "scale=6;1/$2" | bc) ;;
-	*) HLPmsg
-esac
+TEMP=$(getopt -o 'hknps' --long 'help,kll,help,play,speed' -n tps -- "$@")
+eval set -- "$TEMP"
+unset TEMP
+SPDSET=$(echo "$@" | rev | cut -d ' ' -f1 | rev)
+
+
+
+while true ; do
+	case  $1  in
+		'-k'|'--kill')		TGLtp 	"$DEVE"		; shift ; continue ;;
+		'-p'|'--play') 		TGLtp 	"$DWTE"		; shift ; continue ;;
+		'-n'|'--natural')	TGLtp 	"$NASE"		; shift ; continue ;;
+		'-s'|'--speed')		TPspeed	"$SPDSET"	; shift ; continue ;;
+		'-h'|'--help')		HLPM="1"		; shift ; continue ;;
+		'--') break ;;
+		*)
+	esac
+done
+[ -n "HLPM" ] && HLPmsg
