@@ -22,11 +22,11 @@ HLPmsg(){
 	SDMP="x$(echo "scale=2;1/$MSPD" | bc)"
 
 	printf '%s\n' \
-		"| -h --help			= 	   Display help and status	    |"\
-		"| -k --kill			= Toggle $DEVE			Stat: $TGDEVE   |"\
-		"| -p --play	 		= Toggle $DWTE	Stat: $TGDWTE   |"\
-		"| -n --natural			= Toggle $NASE	Stat: $TGNASE   |"\
-		"| -s --speed (multiplier)	= Set    Mouse Speed		Stat: $SDMP |"
+		"| -h --help		 	     Display help and status	    |"\
+		"| -k --kill		   Toggle $DEVE		Stat: $TGDEVE   |"\
+		"| -p --play	 	   Toggle $DWTE	Stat: $TGDWTE   |"\
+		"| -n --natural		   Toggle $NASE	Stat: $TGNASE   |"\
+		"| -s --speed (multiplier)  Set    Mouse Speed		Stat: $SDMP |"
 
 }
 
