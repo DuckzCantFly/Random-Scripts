@@ -1,23 +1,47 @@
 #!/bin/sh
 
-	cd ~/dl/zipper
+	cd "$(xdg-user-dir DOWNLOAD)"
+	mkdir -p zipper/archive
 
-	mv ../*.zip .
+UZcleanu(){
+	cd zipper
+	underscored
 
-	#unzip_d () {
-	#	unzip
-	#	zipfile="$1"
-	#	zipdir=${1%.zip}
-	#	unzip -d "$zipdir" 		"$zipfile"
-	#}
+	for MVFILE in ./* ; do
+		case "$(file --mime-type "$MVFILE" -b)" in
+			application/epub+zip) mkdir -p epub ; mv "$MVFILE" epub ;;
+		esac
+	done
+}
 
-	[ -z "$1" ] && unzip '*.zip' && exit
+Uzip(){
+	for ARCHIVE in ./* ; do
+		$ASVAR "$ARCHIVE" -o zipper &&
+			mv "$ARCHIVE" zipper/archive
+	done
+}
 
-	[ "$1" = "nc" ] && unzip -P 'thatnovelcorner.com' '*.zip' && underscored && exit
 
-	[ "$1" = "p" ] &&\
+case $1 in
+	"nc"|"--nc")
+		ASVAR="unar -P 'thatnovelcorner.com'"
+		Uzip
+		UZcleanu
+		;;
+
+	"p"|"-p")
 		if [ -z "$2" ] ; then
 			read -r -p 'Password:' PASS
 		else
-			PASS=$2
-		fi && unzip -P $PASS '*.zip' && exit
+			PASS="$2"
+		fi
+		ASVAR="unar -P $PASS"
+		Uzip
+		UZcleanu
+		;;
+
+	*)
+		ASVAR="unar"
+		Uzip
+		UZcleanu
+esac

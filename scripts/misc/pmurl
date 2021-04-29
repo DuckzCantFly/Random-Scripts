@@ -2,7 +2,7 @@
 
 PMBROWSER="firefox"
 [ -n "$1" ] \
-	&& ARGS="$@" \
+	&& ARG="$@" \
 	|| ARGS=$(xclip -selection clipboard -o)
 PMcmd(){
 	paru -Si $1

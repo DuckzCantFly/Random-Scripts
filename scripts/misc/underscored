@@ -2,22 +2,31 @@
 
 # funct
 Unscrer(){
-	for f in *	; do
-		new="${f// /_}"
-		[ "$new" != "$f" ] && \
-		if [ -e "$new" ] ; then
-			echo not renaming \""$f"\" because \""$new"\" already exists
+	for FILESPC in *	; do
+		FILEUND="${FILESPC// /_}"
+		[ "$FILEUND" != "$FILESPC" ] && \
+		if [ -e "$FILEUND" ] ; then
+			echo not renaming \""$FILESPC"\" because \""$FILEUND"\" already exists
 		else
-			mv "$f" "$new" && echo moving "$f" to "$new"
+			mv "$FILESPC" "$FILEUND" && echo moving "$FILESPC" to "$FILEUND"
 		fi
 	done
 }
+
 # run
-	[ "$1" = "-R" ] && $(\
-		SDIR="$(pwd)"
-		NDIRS="$(find -type d)"
-		for CDIR in $NDIRS ; do
-			cd "$SDIR/$CDIR"
-			Unscrer
-		done ; exit)
+if [ "$1" = "-R" ] 	; then
+
+	SDIR="$(pwd)"
+	NDIRS="$(find -type d .)"
+	for CDIR in $NDIRS ; do
+		cd "$SDIR/$CDIR"
+		# FILENAME=$(echo *)
+		Unscrer
+	done
+elif [ -n "$1" ]	; then
+	# FILENAME="$@"
 	Unscrer
+else
+	# FILENAME=$(ls *)
+	Unscrer
+fi

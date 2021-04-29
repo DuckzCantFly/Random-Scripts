@@ -10,7 +10,7 @@
 
 BGLOC="${XDG_DATA_HOME:-$HOME/.local/share/}/bg"
 
-ln -sf $BGLOC $HOME/.config/wall.png
+ln -sf "$BGLOC" "$HOME/.config/wall.png"
 
 [ -f "$1" ] \
 	&& ln -sf "$(readlink -f "$1")" "$BGLOC" \
@@ -27,6 +27,8 @@ wal -i "$(readlink -f "$BGLOC")" -o "${XDG_CONFIG_HOME:-$HOME/.config}/wal/postr
 pidof dwm >/dev/null && xdotool key super+F12
 
 BGDIM=$(identify -format "%w %h" "${BGLOC}")
-[ "$(echo $BGDIM | cut -d ' ' -f1)" -ge "1920" -a "$(echo $BGDIM | cut -d ' ' -f2)" -ge "1080" ] \
-	&& xwallpaper --zoom "$BGLOC" \
-	|| xwallpaper --maximize "$BGLOC"
+if [ "$(echo $BGDIM | cut -d ' ' -f1)" -ge "1920" -a "$(echo $BGDIM | cut -d ' ' -f2)" -ge "1080" ] ; then
+	xwallpaper --zoom "$BGLOC"
+else
+	xwallpaper --maximize "$BGLOC"
+fi

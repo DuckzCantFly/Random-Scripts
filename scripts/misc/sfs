@@ -7,11 +7,17 @@
  SDLOG=$SFSMNT/known_dir_log
 
 # Setup Functs
+ ## test ssh connection
+ Stest(){
+  UPDWN=$(ssh -qo ConnectTimeout=7 "$1" exit ; echo $?)
+  [ "$UPDWN" = "1" -o "0" ] && return 0 || return 1
+ }
+
  ## Start up sshfs
  SUSfs(){
-  for CSMADDR in $(cat $SDLOG) ; do
-   Stest $CSMADDR \
-    && sshfs -o transform_symlinks $CSMADDR:/ $SFSMNT/$CSMADDR \
+  for CSMADDR in $(cat "$SDLOG") ; do
+   Stest "$CSMADDR" \
+    && sshfs -o transform_symlinks "$CSMADDR:/" "$SFSMNT/$CSMADDR" \
     || echo "$CSMADDR timed-out connecting" >&2
   done
  }
@@ -19,11 +25,11 @@
  ## Make new dirs for sshfs
  MkSfsDir(){
   for CMDIR in $SFSARGS ; do
-   SNADD=$(grep "^$CMDIR$" $SDLOG 2> /dev/null)
+   SNADD=$(grep "^$CMDIR$" "$SDLOG" 2> /dev/null)
    if [ -z "$SNADD" ] ; then
-    Stest $CMDIR \
-     && mkdir $SFSMNT/$CMDIR \
-     && echo $CMDIR >> $SDLOG \
+    Stest "$CMDIR" \
+     && mkdir "$SFSMNT/$CMDIR" \
+     && echo "$CMDIR" >> "$SDLOG" \
      || echo "$CMDIR timed-out so was not added" >&2
    else
    echo "$CMDIR is already in log" >&2
@@ -33,20 +39,14 @@
 
  ## Kill old prosses
  KlSfs(){
-  for SDKL in $(cat $SDLOG) ; do
+  for SDKL in $(cat "$SDLOG") ; do
    $( pkill -9 sshfs
-   fusermount -uzq $SFSMNT/$SDKL ) && DIDSMTHN="y"
+   fusermount -uzq "$SFSMNT/$SDKL" ) && DIDSMTHN="y"
   done
  }
 
- ## test ssh connection
- Stest(){
-  UPDWN=$(ssh -qo ConnectTimeout=7 $1 exit ; echo $?)
-  [ "$UPDWN" = "1" -o "0" ] && return 0 || return 1
- }
-
 # Run everything
- if mkdir $SFSMNT 2> /dev/null ; then
+ if mkdir "$SFSMNT" 2> /dev/null ; then
   MkSfsDir && SUSfs && exit
  elif [ -z "$1" ] ; then
   KlSfs ; SUSfs && exit

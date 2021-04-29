@@ -3,15 +3,15 @@
 
 # Storage dir:
 	EPUBSTORAGE="$XDG_DATA_HOME/piv"
-	[ -e $EPUBSTORAGE ] || mkdir $EPUBSTORAGE
+	mkdir -p "$EPUBSTORAGE"
 
 # Opening funct:
 	OpenEpub() {
-		sxiv -bfr $EPUBSTORAGE/$EPUBNAME
+		sxiv -bfr "$EPUBSTORAGE/$EPUBNAME"
 	}
 
 # Open last and help
-	[ -z "$1" ] && EPUBNAME=$(cat $EPUBSTORAGE/lastName) && OpenEpub ||\
+	[ -z "$1" ] && EPUBNAME=$(cat "$EPUBSTORAGE/lastName") && OpenEpub ||\
 	[ "$1" = "-h" ] && printf '%s\n' \
         '| $1 = "file" = "Open File"                    |'\
         '| $1 = "--fp" = "Use when providing full path" |'\
@@ -22,12 +22,12 @@
 	[ "$1" = "--fp" ] \
 		&& EPUBPATH="$2" \
 		|| EPUBPATH="$(readlink -f *$1*)"
-	EPUBNAME="$(echo $(basename $EPUBPATH ) | sed -e 's/\.[^.]*$//')"
-	echo "$EPUBNAME" > $EPUBSTORAGE/lastName
+	EPUBNAME="$(basename "$EPUBPATH" | sed -e 's/\.[^.]*$//')"
+	echo "$EPUBNAME" > "$EPUBSTORAGE/lastName"
 
 # Open last or make new
 	[ -e "$EPUBSTORAGE/$EPUBNAME" ] \
-		|| unzip -LL  $EPUBPATH *.jpg *.png *.jpeg -d $EPUBSTORAGE/$EPUBNAME 2>&1 /dev/null
+		|| unzip -LL  "$EPUBPATH" *.jpg *.png *.jpeg -d "$EPUBSTORAGE/$EPUBNAME" 2>&1 /dev/null
 
 # Rotate &open
 	[ "$2" = "-r" ] \

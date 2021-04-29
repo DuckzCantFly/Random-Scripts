@@ -2,19 +2,19 @@
 
 # vars
 	CPURL="$(xclip -selection clipboard -o)"
-	NWNURL="$(echo $CPURL | awk -F/ '{n=split($3, a, "."); printf("%s", a[n-1])}')"
+	NWNURL="$(echo "$CPURL" | awk -F/ '{n=split($3, a, "."); printf("%s", a[n-1])}')"
 ## grab proper name
 	case $NWNURL in
 		"royalroad")
-			NWNTIT="$(wget -qO- $CPURL | perl -l -0777 -ne 'print $1 if /<h1.*?>\s*(.*?)\s*<\/h1/si'l)" ;;
+			NWNTIT="$(wget -qO- "$CPURL" | perl -l -0777 -ne 'print $1 if /<h1.*?>\s*(.*?)\s*<\/h1/si'l)" ;;
 		"scribblehub")
-			NWNTIT="$(wget -qO- $CPURL | perl -l -0777 -ne 'print $1 if /<title.*?>\s*(.*?)\s*<\/title/si'l)"
+			NWNTIT="$(wget -qO- "$CPURL" | perl -l -0777 -ne 'print $1 if /<title.*?>\s*(.*?)\s*<\/title/si'l)"
 			NWNTIT=${NWNTIT%% | Scribble Hub} ;;
 		"webnovel")
-			NWNTIT="$(wget -qO- $CPURL | perl -l -0777 -ne 'print $1 if /<h2.*?>\s*(.*?)\s*<\/h2/si'l)"
+			NWNTIT="$(wget -qO- "$CPURL" | perl -l -0777 -ne 'print $1 if /<h2.*?>\s*(.*?)\s*<\/h2/si'l)"
 			NWNTIT=${NWNTIT%% <small>*} ;;
 		*)
-			NWNTIT="$(wget -qO- $CPURL | perl -l -0777 -ne 'print $1 if /<title.*?>\s*(.*?)\s*<\/title/si'l)" ;;
+			NWNTIT="$(wget -qO- "$CPURL" | perl -l -0777 -ne 'print $1 if /<title.*?>\s*(.*?)\s*<\/title/si'l)" ;;
 	esac
 	NWNTIT="${NWNTIT// /_}"
 	NWNDIR="/home/share/doc/books/wn/$NWNURL/$NWNTIT"
@@ -22,6 +22,8 @@
 # run everyting
 	echo -n ' ' | xclip -selection clipboard
 
-	[ "$1" = "r" -o "$1" = "-r" ]\
-		&& lncrawl -o $NWNDIR -s $CPURL --format epub json --single\
-		|| lncrawl -o $NWNDIR -s $CPURL --format epub json --single --suppress
+	if [ "$1" = "r" -o "$1" = "-r" ] ; then
+		lncrawl -o "$NWNDIR" -s "$CPURL" --format epub json --single
+	else
+		lncrawl -o "$NWNDIR" -s "$CPURL" --format epub json --single --suppress
+	fi

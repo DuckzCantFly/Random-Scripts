@@ -1,0 +1,55 @@
+#! /bin/sh
+
+# Storage dir:
+	MDFSTORAGE="$XDG_DATA_HOME/mdrd"
+	mkdir -p "$MDFSTORAGE"
+
+# Opening funct:
+	VIEWmarkdown() {
+		mdless -P "$MDFSTORAGE/$MDFNAME/$MDFNAME.md"\
+			| less
+			# | bat --italic-text always --decorations never --pager "less"
+	}
+
+	PDFconvert(){
+		MDFDIR="$(echo "$MDFPATH" | rev | cut -d '/' -f 2- | rev)"
+		CNTDIR="$(pwd)"
+		mkdir -p /tmp/mdrd
+		mkdir -p "$MDFSTORAGE/$MDFNAME"
+
+		cd /home/share/doc/github/opendocsg/pdf2md
+		PTMOUT="$(npx @opendocsg/pdf2md --inputFolderPath="$MDFDIR" --outputFolderPath=/tmp/mdrd)"
+		cd "$CNTDIR"
+
+
+		TPNAME=$(echo $PTMOUT | head -n 1 | rev | cut -d ' ' -f2 | cut -d '/' -f1 | cut -d '.' -f 4- | rev)
+		echo $PTMOUT >&2
+		mv "/tmp/mdrd/$TPNAME" "$MDFSTORAGE/$MDFNAME"
+	}
+
+	[ -z "$1" ] && MDFNAME=$(cat "$MDFSTORAGE/lastName") && VIEWmarkdown ||\
+	[ "$1" = "-h" ] && printf '%s\n' \
+        '| $1 = "file" = "Open File"                    |'\
+        '| $1 = "--fp" = "Use when providing full path" |'\
+        '| $1 = "-h"   = "Show Help"                    |'\
+        '| $1 = ""     = "Last File" and/or "Show Help" |' && exit
+
+# Set up vars
+	[ "$1" = "--fp" ] \
+		&& MDFPATH="$2" \
+		|| MDFPATH="$(readlink -f -- *$1*)"
+	MDFNAME="$(basename "$MDFPATH" | sed -e 's/\.[^.]*$//')"
+	echo "$MDFNAME" > "$MDFSTORAGE/lastName"
+
+# Open last or make new
+	if [ -e "$MDFSTORAGE/$MDFNAME" ] ; then
+	VIEWmarkdown
+	else
+		mkdir -p "$MDFSTORAGE/$MDFNAME"
+		case $(echo "$(readlink -f -- "$MDFPATH")" | rev | cut -d '.' -f1 | rev | tr '[:upper:]' '[:lower:]') in
+			"pdf")	PDFconvert ;;
+			*)
+			pandoc -s "$MDFPATH" -o "$MDFSTORAGE/$MDFNAME/$MDFNAME.md" --markdown-headings=atx --wrap=none --toc --extract-media="$MDFSTORAGE/$MDFNAME/"
+		esac
+		VIEWmarkdown
+	fi

@@ -38,6 +38,6 @@
 	esac
 
 # Run commands
-	[ -n "$1" ] && ln -sf "$(readlink -f "$1")" $XDG_DATA_HOME/bgc/$SZN/$VBG
-	setbg $XDG_DATA_HOME/bgc/$SZN/$VBG
+	[ -n "$1" ] && ln -sf "$(readlink -f "$1")" "$XDG_DATA_HOME/bgc/$SZN/$VBG"
+	setbg "$XDG_DATA_HOME/bgc/$SZN/$VBG"
 	echo $TETBG | bgctimer

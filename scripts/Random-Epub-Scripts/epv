@@ -2,15 +2,15 @@
 
 # Storage dir:
 	EPUBSTORAGE="$XDG_DATA_HOME/epr"
-	[ -e $EPUBSTORAGE ] || mkdir $EPUBSTORAGE
+	mkdir -p "$EPUBSTORAGE"
 
 # Opening funct:
 	OpenEpub() {
-		nvim $EPUBSTORAGE/$EPUBNAME
+		nvim "$EPUBSTORAGE/$EPUBNAME"
 	}
 
 # Open last and help
-	[ -z "$1" ] && EPUBNAME=$(cat $EPUBSTORAGE/lastName) && OpenEpub ||\
+	[ -z "$1" ] && EPUBNAME=$(cat "$EPUBSTORAGE/lastName") && OpenEpub ||\
 	[ "$1" = "-h" ] && printf '%s\n' \
         '| $1 = "file" = "Open File"                    |'\
         '| $1 = "--fp" = "Use when providing full path" |'\
@@ -21,10 +21,10 @@
 	[ "$1" = "--fp" ] \
 		&& EPUBPATH="$2" \
 		|| EPUBPATH="$(readlink -f *$1*)"
-	EPUBNAME="$(echo $(basename $EPUBPATH ) | sed -e 's/\.[^.]*$/.txt/')"
-	echo "$EPUBNAME" > $EPUBSTORAGE/lastName
+	EPUBNAME="$(basename "$EPUBPATH" | sed -e 's/\.[^.]*$/.txt/')"
+	echo "$EPUBNAME" > "$EPUBSTORAGE/lastName"
 
 # Open last or make new
 	[ -e "$EPUBSTORAGE/$EPUBNAME" ] \
-		|| epub2txt -w 0 $EPUBPATH > $EPUBSTORAGE/$EPUBNAME
+		|| epub2txt -w 0 "$EPUBPATH" > "$EPUBSTORAGE/$EPUBNAME"
 	OpenEpub

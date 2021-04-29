@@ -1,0 +1,44 @@
+#! /bin/sh
+
+TPDIR="/tmp/vgmcrl"
+ABMURL="$(xclip -selection clipboard -o)"
+CABLMNAMETMP="$(echo "$ABMURL" | rev | cut -d '/' -f1 | rev)"
+
+mkdir "$TPDIR/$CABLMNAMETMP" 2> /dev/null
+curl -s "$ABMURL" > "$TPDIR/$CABLMNAMETMP"
+# CABLMNAME="$(grep "Album name:" "$TPDIR/tmpy" | sed "s/^.*Album name:\ <b>//g;s/<\/b><br>.*$//")"
+NADIR="$(pwd)/$CABLMNAMETMP"
+
+mkdir "$NADIR" "$NADIR/extra"
+
+PAGskm(){
+	GPUNK="$1"
+	RPURL="$2"
+	shift ; shift
+	curl -s "$@" \
+		| grep "$GPUNK" \
+		| sed "s/^.*href=\"/$RPURL/g;s/\".*$//"
+}
+
+rm "$TPDIR/$CABLMNAMETMP-art-link" "$TPDIR/$CABLMNAMETMP-song-link" 2> /dev/null
+
+echo "$(grep 'a href="https://vgmsite.com/soundtracks/' "$TPDIR/$CABLMNAMETMP" \
+	| cut -d '"' -f2 )" >> "$TPDIR/$CABLMNAMETMP-art-link"
+
+for SNGURL in $(grep '<td class="playlistDownloadSong">' "$TPDIR/$CABLMNAMETMP" \
+		| sed "s/^.*href=\"/https\:\/\/downloads\.khinsider\.com/g;s/\".*$//") ; do
+	DLURL=$(PAGskm "Click here to download as FLAC" "" "$SNGURL")
+	[ -z "$DLURL" ] && DLURL=$(PAGskm "Click here to download as M4A" "" "$SNGURL")
+	[ -z "$DLURL" ] && DLURL=$(PAGskm "Click here to download as MP3" "" "$SNGURL")
+	echo $DLURL >> "$TPDIR/$CABLMNAMETMP-song-link"
+done
+
+wget -o /dev/null -i "$TPDIR/$CABLMNAMETMP-art-link" -P "$NADIR/extra"
+wget -o /dev/null -i "$TPDIR/$CABLMNAMETMP-song-link" -P "$NADIR"
+
+[ "$(echo "$NADIR/extra/*" | wc -w )" = "1" ] && convert "$NADIR/extra/*" "$NADIR/cover.jpg"
+
+ls -lhR "$NADIR"
+
+# CDEST="$(pwd)/$CABLMNAME"
+# mv "$NADIR"  "$CDEST"

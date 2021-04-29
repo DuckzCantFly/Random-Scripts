@@ -9,26 +9,30 @@
 	fi
 # Set up vars:
 	EPUBSTORAGE="$XDG_DATA_HOME/epr"
-	[ -e $EPUBSTORAGE ] || mkdir $EPUBSTORAGE
+	mkdir -p "$EPUBSTORAGE"
 	ETRPOUT="$HOME/dl"
 	ETRPSTORAGE="/tmp/etrp"
-	jPUBFILES=$(ls $EPUBSTORAGE) || mkdir $EPUBSTORAGE
+	EPUBFILES=$(echo "$EPUBSTORAGE"/*)
 	[ "$1" = "--fp" ] \
 		&& EPUBPATH="$2" \
 		|| EPUBPATH="$(readlink -f *$1*)"
-	ETRPNAME="$(basename $EPUBPATH  | sed -e 's/\.[^.]*$//')"
-	EPUBNAME="$(basename $EPUBPATH  | sed -e 's/\.[^.]*$/.txt/')"
+	ETRPNAME="$(basename "$EPUBPATH" | sed -e 's/\.[^.]*$//')"
+	EPUBNAME="$(basename "$EPUBPATH" | sed -e 's/\.[^.]*$/.txt/')"
 	SLPITLINE="200"
 # Make new
-	[ -e "$EPUBSTORAGE/$EPUBNAME" ] \
-		&& echo $EPUBFILES | grep $EPUBNAME 2>&1 /dev/null \
-		|| epub2txt -w 0 $EPUBPATH > $EPUBSTORAGE/$EPUBNAME
+	if [ -e "$EPUBSTORAGE/$EPUBNAME" ] ; then
+		echo "$EPUBFILES" | grep "$EPUBNAME" 2>&1 /dev/null \
+	else
+		epub2txt -w 0 "$EPUBPATH" > "$EPUBSTORAGE/$EPUBNAME"
+	fi
 # Repack everything
-	[ -e $EPUBSTORAGE ] \
-		&& rm -rf $ETRPSTORAGE/* \
-		|| mkdir $ETRPSTORAGE 2>/dev/nulr
-	mkdir -p $ETRPSTORAGE/$ETRPNAME ; cd $ETRPSTORAGE/$ETRPNAME
+	if [ -e "$EPUBSTORAGE" ] ; then
+		rm -rf "$ETRPSTORAGE"/* \
+	else
+		mkdir "$ETRPSTORAGE" 2>/dev/nulr
+	fi
+	mkdir -p "$ETRPSTORAGE/$ETRPNAME" ; cd "$ETRPSTORAGE/$ETRPNAME"
 
-	split $EPUBSTORAGE/$EPUBNAME -l $SLPITLINE
+	split "$EPUBSTORAGE/$EPUBNAME" -l "$SLPITLINE"
 	for f in * ; do mv "$f" "$f.txt" ; done
-	zip -r9q $ETRPOUT/$ETRPNAME.zip $ETRPSTORAGE/$ETRPNAME
+	zip -r9q "$ETRPOUT/$ETRPNAME.zip" "$ETRPSTORAGE/$ETRPNAME"

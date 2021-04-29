@@ -14,16 +14,15 @@ if [ "$2" = "-w" ] 				; then
 	[ "$(cat $TTSLR)" = "$(cat $TTSLR-1)" ] && exit
 	CTTSCNT=$(pgrep tts | wc -l)
 	while [ "$CTTSCNT" -gt "0" ] ; do
-		tail --pid=$(pgrep espeak-ng) -f /dev/null 2>/dev/null
+		tail --pid="$(pgrep espeak-ng)" -f /dev/null 2>/dev/null
 		CTTSCNT=$(($CTTSCNT-1))
 	done
 elif [ "$(cat $TTSLR)" = "$(cat $TTSLR-1)" ] 	; then
-
 	pkill espeak-ng && exit
 else
-	$(pkill espeak-ng && sleep .1)
+	pkill espeak-ng && sleep .1
 fi
 
-echo $TXTGRB > $TTSLR
+echo "$TXTGRB" > "$TTSLR"
 
 espeak-ng -s 700 "$TXTGRB"
