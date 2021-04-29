@@ -8,9 +8,7 @@
 
 # Location of link to wallpaper link.
 
-BGLOC="${XDG_DATA_HOME:-$HOME/.local/share/}/bg"
-
-ln -sf "$BGLOC" "$HOME/.config/wall.png"
+BGLOC="$XDG_DATA_HOME/bg"
 
 [ -f "$1" ] \
 	&& ln -sf "$(readlink -f "$1")" "$BGLOC" \
@@ -26,9 +24,27 @@ wal -i "$(readlink -f "$BGLOC")" -o "${XDG_CONFIG_HOME:-$HOME/.config}/wal/postr
 
 pidof dwm >/dev/null && xdotool key super+F12
 
-BGDIM=$(identify -format "%w %h" "${BGLOC}")
-if [ "$(echo $BGDIM | cut -d ' ' -f1)" -ge "1920" -a "$(echo $BGDIM | cut -d ' ' -f2)" -ge "1080" ] ; then
-	xwallpaper --zoom "$BGLOC"
-else
-	xwallpaper --maximize "$BGLOC"
-fi
+for DSPLY in $(xrandr | grep " connected " | cut -d ' ' -f1) ; do
+	PDREZ="$(xrandr | awk '{
+			if(/^'$DSPLY'/) {
+				print $0;
+				m="t";
+			} else if(m == "t"){
+				if (/^[a-zA-Z]/){
+				        exit
+				} else {
+				        print $0
+				}
+			}
+		}' | grep '*' | cut -d ' ' -f4)"
+	PDWTH="$(echo "$PDREZ" | cut -d 'x' -f1)"
+	PDHGT="$(echo "$PDREZ" | cut -d 'x' -f2)"
+
+	BGDIM=$(identify -format "%w %h" "${BGLOC}")
+	if [ "$(echo $BGDIM | cut -d ' ' -f1)" -ge "$PDWTH" -a "$(echo $BGDIM | cut -d ' ' -f2)" -ge "$PDHGT" ] ; then
+		XWPARG="$XWPARG --output $DSPLY --zoom $BGLOC"
+	else
+		XWPARG="$XWPARG --output $DSPLY --maximize $BGLOC"
+	fi
+done
+xwallpaper $XWPARG
