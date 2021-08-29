@@ -24,7 +24,8 @@ Uzip(){
 
 case $1 in
 	"nc"|"--nc")
-		ASVAR="unar -P 'thatnovelcorner.com'"
+		PASS="thatnovelcorner.com"
+		ASVAR="unar -password $PASS"
 		Uzip
 		UZcleanu
 		;;
@@ -35,7 +36,7 @@ case $1 in
 		else
 			PASS="$2"
 		fi
-		ASVAR="unar -P $PASS"
+		ASVAR="unar -password $PASS"
 		Uzip
 		UZcleanu
 		;;

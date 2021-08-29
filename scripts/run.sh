@@ -1,10 +1,12 @@
 #! /bin/sh
 
-[ -z "$1" ]\
-	&& GAMELOC="$(echo "$0" | rev | cut -d '/' -f 2- | rev)"\
-	|| GAMELOC="$1"
+if [ -z "$1" ] ; then
+	GAMELOC="$(echo "$0" | rev | cut -d '/' -f 2- | rev)"\
+	else
+	GAMELOC="$1"
+fi
 
-[ "$(ls -l "$GAMELOC/nw" | cut -d ' ' -f1)" != "-rwxr-xr-x" ]\
+[ -x "$GAMELOC/nw" ]\
 	&& chmod +x "$GAMELOC/nw"
 
 "$GAMELOC/nw"

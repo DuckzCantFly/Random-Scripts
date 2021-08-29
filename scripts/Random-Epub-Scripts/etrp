@@ -29,7 +29,7 @@
 	if [ -e "$EPUBSTORAGE" ] ; then
 		rm -rf "$ETRPSTORAGE"/* \
 	else
-		mkdir "$ETRPSTORAGE" 2>/dev/nulr
+		mkdir "$ETRPSTORAGE" 2> /dev/null
 	fi
 	mkdir -p "$ETRPSTORAGE/$ETRPNAME" ; cd "$ETRPSTORAGE/$ETRPNAME"
 

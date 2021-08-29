@@ -1,0 +1,11 @@
+#! /bin/sh
+
+FNAME="$1"
+MULT="$2"
+NOISE="$3"
+CTNAME="$(echo $FNAME | rev | cut -d '.' -f 2-| rev)"
+NWNAME=""$CTNAME"_"$MULT"x"$NOISE"n.png"
+
+waifu2x-ncnn-vulkan -i ./$FNAME -n $NOISE -s $MULT -f png -o ./$NWNAME \
+	&& sxiv $CTNAME* \
+	&& mv $FNAME .2x_archive

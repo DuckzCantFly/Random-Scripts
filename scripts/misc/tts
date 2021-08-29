@@ -1,28 +1,88 @@
 #! /bin/sh
 
-case $1 in
-	"-s")	TXTGRB="$(xsel)" 				;;
-	"-c")	TXTGRB="$(xclip -selection clipboard -o)" 	;;
-	*) exit
-esac
+# case $1 in
+# 	"-s")	TXTGRB="$(xsel)" 				;;
+# 	"-c")	TXTGRB="$(xclip -selection clipboard -o)" 	;;
+# 	*) exit
+# esac
 
-TTSLR="/tmp/tts_lastread"
+# TTSLR="/tmp/tts_lastread"
 
-echo $TXTGRB > $TTSLR-1
+# echo $TXTGRB > $TTSLR-1
+
+# if [ "$2" = "-w" ] 				; then
+# 	[ "$(cat $TTSLR)" = "$(cat $TTSLR-1)" ] && exit
+# 	CTTSCNT=$(pgrep tts | wc -l)
+# 	while [ "$CTTSCNT" -gt "0" ] ; do
+# 		TTSPID="$(pgrep espeak-ng)"
+# 		echo $TTSPID
+# 		tail --pid="$TTSPID" -f /dev/null 2>/dev/null
+# 		CTTSCNT=$(($CTTSCNT-1))
+# 	done
+# elif [ "$(cat $TTSLR)" = "$(cat $TTSLR-1)" ] 	; then
+# 	pkill espeak-ng && exit
+# else
+# 	pkill espeak-ng && sleep .1
+# fi
+
+# echo "$TXTGRB" > "$TTSLR"
+
+# espeak-ng -s 700 "$TXTGRB"
+
+
+####this is the beta code####
+
+# use slected text or clip board
+	case $1 in
+ 		"-s")	TXTGRB="$(xsel)" 				;;
+ 		"-c")	TXTGRB="$(xclip -selection clipboard -o)" 	;;
+ 		*) exit
+	esac
+
+# Dir to store tmp data
+	TTSDIR="/tmp/tts_reader" ; mkdir -p $TTSDIR
+
+# iteration file and adds one to current iteration
+	TTSNUMFILE="$TTSDIR/tts_number" ; CTTSNUM="$(($(cat $TTSNUMFILE)+1))"
+
+# list file
+	TTSNUMLIST="$TTSDIR/number_list"
+
+# updates itteration file with current iteration
+	echo $CTTSNUM > $TTSNUMFILE
+
+# adds curent itteration to number list
+	echo "$CTTSNUM" >> "$TTSNUMLIST"
+
+# last read file to prevent repets
+	TTSLR="$TTSDIR/tts_lastread"
+
+#idrk reformats the text or somthing
+	TTSLRNEW="$(echo "$TXTGRB")"
+
 
 if [ "$2" = "-w" ] 				; then
-	[ "$(cat $TTSLR)" = "$(cat $TTSLR-1)" ] && exit
-	CTTSCNT=$(pgrep tts | wc -l)
-	while [ "$CTTSCNT" -gt "0" ] ; do
-		tail --pid="$(pgrep espeak-ng)" -f /dev/null 2>/dev/null
-		CTTSCNT=$(($CTTSCNT-1))
+	[ "$(cat $TTSLR)" = "$TTSLRNEW" ]  && exit
+
+	ITTERKILL="1"
+	[ -n "$TTSNUMLIST" ] && while [ "$ITTERKILL" -lt "30" ] && [ "$(head -n +1 $TTSNUMLIST)" != "$CTTSNUM" ] ; do
+		ITTERKILL="$(($ITTERKILL+1))"
+		TTSPID="$(pgrep espeak-ng)"
+		echo $TTSPID
+		tail --pid="$TTSPID" -f /dev/null 2>/dev/null
 	done
-elif [ "$(cat $TTSLR)" = "$(cat $TTSLR-1)" ] 	; then
+
+elif [ "$(cat $TTSLR)" = "$TTSLRNEW" ] 	; then
+	echo "" > $TTSNUMLIST
 	pkill espeak-ng && exit
 else
+	echo "" > $TTSNUMLIST
 	pkill espeak-ng && sleep .1
 fi
 
 echo "$TXTGRB" > "$TTSLR"
 
+cat $TTSNUMLIST
+
 espeak-ng -s 700 "$TXTGRB"
+echo "$(tail -n +2 $TTSNUMLIST)" > $TTSNUMLIST

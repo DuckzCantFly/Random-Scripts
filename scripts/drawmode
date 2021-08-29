@@ -1,0 +1,7 @@
+#! /bin/sh
+
+PDSPLY="$(xrandr | grep -w primary | cut -d " " -f1)"
+
+for INPUT in $(xinput | grep "Wacom" | grep -v "Finger touch" | cut -c 55-56) ; do
+	xinput map-to-output $INPUT $PDSPLY
+done

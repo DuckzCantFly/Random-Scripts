@@ -7,14 +7,14 @@
 	'| $1 = "-h" or "" = "Show Help"			    |' && exit
 # Storage dir:
 	EPUBSTORAGE="/tmp/pubrp"
-	mkdir "$EPUBSTORAGE" 2> /dev/null || rm -rf "$EPUBSTORAGE"/*
+	mkdir -p "$EPUBSTORAGE"
 # Set up vars
 	[ "$1" = "--fp" ] \
 		&& EPUBPATH="$2" \
-		|| EPUBPATH="$(readlink -f *$1*)"
+		|| EPUBPATH="$(readlink -f $1)"
 	EPUBNAME="$(basename "$EPUBPATH" | sed -e 's/\.[^.]*$//')"
 
-	unzip "$EPUBPATH" -d "$EPUBSTORAGE/$EPUBNAME" 2>&1 /dev/null
+	unzip $EPUBPATH -d $EPUBSTORAGE/$EPUBNAME 2>&1
 
 	MTYPCASE=$(echo "$EPUBSTORAGE/$EPUBNAME"/* | grep -i mimetype)
 	METACASE=$(echo "$EPUBSTORAGE/$EPUBNAME"/* | grep -i META-INF)

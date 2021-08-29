@@ -1,0 +1,7 @@
+#! /bin/sh
+
+PMBROWSER="firefox"
+
+ARGS="$(xsel)"
+
+$PMBROWSER "$ARGS"
