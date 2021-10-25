@@ -1,10 +1,12 @@
 #! /bin/sh
+# script to get epub thumbnaild for lf & cave, really neich
 
 # Storage dir:
 	EPUBSTORAGE="$XDG_DATA_HOME/epbthumb"
 	mkdir -p "$EPUBSTORAGE"
 	EPUBPATH="$1"
 	EPUBNAME="$(basename "$EPUBPATH" | sed -e 's/\.[^.]*$/.jpeg/')"
+
 # Open last or make new & open
 	[ -e "$EPUBSTORAGE/$EPUBNAME" ] \
 		|| epub-thumbnailer "$EPUBPATH" "$EPUBSTORAGE/$EPUBNAME" 720
