@@ -1,4 +1,5 @@
 #! /bin/sh
+# tts reapper for picospeaker
 
 # cant put this in the tmp dir for some retarded reason
 # DFLOC=/tmp/picospeaker-dwm.wav
