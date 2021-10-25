@@ -1,74 +1,82 @@
 #! /bin/sh
+# script to interact with my keyboards vitual mouse and tweek its settigns
 
-TPNAME="OLKB Preonic Mouse"
-TVNS="DEVE NASE"
-DEVE="Device"
-NASE="Natural Scrolling"
+# vars
+	TPNAME="OLKB Preonic Mouse"
+	TVNS="DEVE NASE"
+	DEVE="Device"
+	NASE="Natural Scrolling"
 
 
 
-HLPmsg(){
+# functions
+	##help message
+	HLPmsg(){
+		STPSTAT=$(xinput list-props "$TPNAME")
+		for GBST in $TVNS ; do
+			GBDSTAT=$(echo "$STPSTAT" | grep "$(eval "echo \"\$$GBST\"") Enabled (")
+			[ "$(echo "$GBDSTAT" | tail -c 2)" = "1" ] \
+				&& eval "TG$GBST='On '"\
+				|| eval "TG$GBST='Off'"
+		done
+		MSPD=$(echo "$STPSTAT"\
+			| grep "Coordinate Transformation Matrix"\
+			|cut -d ' ' -f12)
+		SDMP="x$(echo "scale=2;1/$MSPD" | bc)"
+
+		printf '%s\n' \
+			"| -h --help		 	     Display help and status	    |"\
+			"| -k --kill		   Toggle $DEVE		Stat: $TGDEVE   |"\
+			"| -n --natural		   Toggle $NASE	Stat: $TGNASE   |"\
+			"| -s --speed (multiplier)  Set    Mouse Speed		Stat: $SDMP |"
+
+	}
+
+	# run help message before loading anything else if no args
+	[ -z "$@" ] && HLPmsg && exit
 	STPSTAT=$(xinput list-props "$TPNAME")
-	for GBST in $TVNS ; do
-		GBDSTAT=$(echo "$STPSTAT" | grep "$(eval "echo \"\$$GBST\"") Enabled (")
-		[ "$(echo "$GBDSTAT" | tail -c 2)" = "1" ] \
-			&& eval "TG$GBST='On '"\
-			|| eval "TG$GBST='Off'"
+
+	# univercal option toggle
+	TGLtp(){
+		GBDSTAT=$(echo "$STPSTAT" | grep "$1 Enabled (")
+		TGLID=$(echo "$GBDSTAT" | cut -d "(" -f2 | cut -d ")" -f1)
+
+		[ "$(echo "$GBDSTAT" | tail -c 2)" = "1" ] && TGLSTAT="0" || TGLSTAT="1"
+
+		xinput --set-prop "$TPNAME" $TGLID $TGLSTAT
+	}
+
+	# mouse speed setter function
+	TPspeed(){
+		if [ "$1" = '--' ] 				; then
+			SPDARG="1" && printf "No speed argument defaulting to 1 \n"
+		elif echo $1 | grep -Pq "^-?\d*\.?\d*$"	;then
+			SPDARG="$1"
+		else
+			SPDARG="1" && printf '%s\n' "Speed argument \"$1\" not floating point number defaulting to 1 \n"
+		fi
+
+		xinput --set-prop "$TPNAME" 'Coordinate Transformation Matrix' 1 0 0 0 1 0 0 0 $(echo "scale=6;1/$SPDARG" | bc)
+	}
+
+
+# parse and run
+	TEMP=$(getopt -o 'hknps' --long 'help,kll,help,play,speed' -n tps -- "$@")
+	eval set -- "$TEMP"
+	unset TEMP
+	SPDSET=$(echo "$@" | rev | cut -d ' ' -f1 | rev)
+
+
+
+	while true ; do
+		case  $1  in
+			'-k'|'--kill')		TGLtp 	"$DEVE"		; shift ; continue ;;
+			'-p'|'--play') 		TGLtp 	"$DWTE"		; shift ; continue ;;
+			'-n'|'--natural')	TGLtp 	"$NASE"		; shift ; continue ;;
+			'-s'|'--speed')		TPspeed	"$SPDSET"	; shift ; continue ;;
+			'-h'|'--help')		HLPM="1"		; shift ; continue ;;
+			'--') break ;;
+			*)
+		esac
 	done
-	MSPD=$(echo "$STPSTAT"\
-		| grep "Coordinate Transformation Matrix"\
-		|cut -d ' ' -f12)
-	SDMP="x$(echo "scale=2;1/$MSPD" | bc)"
-
-	printf '%s\n' \
-		"| -h --help		 	     Display help and status	    |"\
-		"| -k --kill		   Toggle $DEVE		Stat: $TGDEVE   |"\
-		"| -n --natural		   Toggle $NASE	Stat: $TGNASE   |"\
-		"| -s --speed (multiplier)  Set    Mouse Speed		Stat: $SDMP |"
-
-}
-
-[ -z "$@" ] && HLPmsg && exit
-STPSTAT=$(xinput list-props "$TPNAME")
-
-TGLtp(){
-	GBDSTAT=$(echo "$STPSTAT" | grep "$1 Enabled (")
-	TGLID=$(echo "$GBDSTAT" | cut -d "(" -f2 | cut -d ")" -f1)
-
-	[ "$(echo "$GBDSTAT" | tail -c 2)" = "1" ] && TGLSTAT="0" || TGLSTAT="1"
-
-	xinput --set-prop "$TPNAME" $TGLID $TGLSTAT
-}
-
-TPspeed(){
-	if [ "$1" = '--' ] 				; then
-		SPDARG="1" && printf "No speed argument defaulting to 1 \n"
-	elif echo $1 | grep -Pq "^-?\d*\.?\d*$"	;then
-		SPDARG="$1"
-	else
-		SPDARG="1" && printf '%s\n' "Speed argument \"$1\" not floating point number defaulting to 1 \n"
-	fi
-
-	xinput --set-prop "$TPNAME" 'Coordinate Transformation Matrix' 1 0 0 0 1 0 0 0 $(echo "scale=6;1/$SPDARG" | bc)
-}
-
-
-TEMP=$(getopt -o 'hknps' --long 'help,kll,help,play,speed' -n tps -- "$@")
-eval set -- "$TEMP"
-unset TEMP
-SPDSET=$(echo "$@" | rev | cut -d ' ' -f1 | rev)
-
-
-
-while true ; do
-	case  $1  in
-		'-k'|'--kill')		TGLtp 	"$DEVE"		; shift ; continue ;;
-		'-p'|'--play') 		TGLtp 	"$DWTE"		; shift ; continue ;;
-		'-n'|'--natural')	TGLtp 	"$NASE"		; shift ; continue ;;
-		'-s'|'--speed')		TPspeed	"$SPDSET"	; shift ; continue ;;
-		'-h'|'--help')		HLPM="1"		; shift ; continue ;;
-		'--') break ;;
-		*)
-	esac
-done
-[ -n "HLPM" ] && HLPmsg
+	[ -n "HLPM" ] && HLPmsg

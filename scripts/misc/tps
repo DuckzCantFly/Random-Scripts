@@ -28,12 +28,13 @@
 			"| -k --kill		   Toggle $DEVE		Stat: $TGDEVE   |"\
 			"| -p --play	 	   Toggle $DWTE	Stat: $TGDWTE   |"\
 			"| -n --natural		   Toggle $NASE	Stat: $TGNASE   |"\
-			"| -s --speed (multiplier)  Set    Mouse Speed		Stat: $SDMP |"
+			"| -s --speed (multiplier)  Set    Mouse Speed		Stat: $SDMP     |"
 
 	}
+
 	# run help message before loading anything else if no args
-		[ -z "$@" ] && HLPmsg && exit
-		STPSTAT=$(xinput list-props "$TPNAME")
+	[ -z "$@" ] && HLPmsg && exit
+	STPSTAT=$(xinput list-props "$TPNAME")
 
 	# univercal option toggle
 	TGLtp(){
