@@ -1,4 +1,5 @@
 #! /bin/sh
+# timer for bgc
 
 sleep "$(cat)"m
 

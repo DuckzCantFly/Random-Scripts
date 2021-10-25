@@ -1,3 +1,4 @@
 #! /bin/sh
+# auto folds for less
 
 fold -s -w $(tput cols) $1 | less

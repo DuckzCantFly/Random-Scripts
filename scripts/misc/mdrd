@@ -1,10 +1,12 @@
 #! /bin/sh
+# autoconverts files to makdown ad displays them, setting up a cash for later use
 
 # Storage dir:
 	MDFSTORAGE="$XDG_DATA_HOME/mdrd"
 	mkdir -p "$MDFSTORAGE"
 
-# Opening funct:
+#functs:
+	# Opening funct:
 	VIEWmarkdown() {
 		mdless -P "$MDFSTORAGE/$MDFNAME/$MDFNAME.md"\
 			| less
@@ -43,7 +45,7 @@
 
 # Open last or make new
 	if [ -e "$MDFSTORAGE/$MDFNAME" ] ; then
-	VIEWmarkdown
+		VIEWmarkdown
 	else
 		mkdir -p "$MDFSTORAGE/$MDFNAME"
 		case $(echo "$(readlink -f -- "$MDFPATH")" | rev | cut -d '.' -f1 | rev | tr '[:upper:]' '[:lower:]') in

@@ -1,4 +1,5 @@
 #! /bin/sh
+# Weird idea for softwair modular keyboard, good for some games
 
 [ "$1" = "vi" ] && (
 xmodmap -e 'keycode 43 = 0xff51'

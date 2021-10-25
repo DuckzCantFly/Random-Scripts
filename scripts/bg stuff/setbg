@@ -10,20 +10,24 @@
 
 BGLOC="$XDG_DATA_HOME/bg"
 
+# wallpaper is file
 [ -f "$1" ] \
 	&& ln -sf "$(readlink -f "$1")" "$BGLOC" \
 	&& notify-send -i "$BGLOC" "Changing wallpaper..."
 
+# wallpaper is random file in dir
 [ -d "$1" ] \
 	&& ln -sf "$(find "$(readlink -f "$1")" -iregex '.*.\(jpg\|jpeg\|png\|gif\)' -type f | shuf -n 1)" "$BGLOC" \
 	&& notify-send -i "$BGLOC" "Random Wallpaper chosen."
 
 
 # If pywal is installed, use it.
-wal -i "$(readlink -f "$BGLOC")" -o "${XDG_CONFIG_HOME:-$HOME/.config}/wal/postrun" >/dev/null 2>&1
+	wal -i "$(readlink -f "$BGLOC")" -o "${XDG_CONFIG_HOME:-$HOME/.config}/wal/postrun" >/dev/null 2>&1
 
-pidof dwm >/dev/null && xdotool key super+F12
+# honestly idfk
+	pidof dwm >/dev/null && xdotool key super+F12
 
+# get correct scaling
 for DSPLY in $(xrandr | grep " connected " | cut -d ' ' -f1) ; do
 	PDREZ="$(xrandr | awk '{
 			if(/^'$DSPLY'/) {
@@ -47,4 +51,6 @@ for DSPLY in $(xrandr | grep " connected " | cut -d ' ' -f1) ; do
 		XWPARG="$XWPARG --output $DSPLY --maximize $BGLOC"
 	fi
 done
-xwallpaper $XWPARG
+
+# run
+	xwallpaper $XWPARG

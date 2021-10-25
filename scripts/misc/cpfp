@@ -1,4 +1,5 @@
 #! /bin/sh
+# copies a files path small self explanatory
 
 [ -z "$1" ] && exit
 
