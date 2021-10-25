@@ -1,48 +1,56 @@
 #!/bin/sh
+# script to quickly sort and orginixe zips while unzipping them
 
-	cd "$(xdg-user-dir DOWNLOAD)"
-	mkdir -p zipper/archive
+# startup and vars
+	DLDIR="$(xdg-user-dir DOWNLOAD)"
+	ZPDIR="${DLDIR}/dl_tmp/zipper"  ; mkdir -p ${ZPDIR}
+	ARDIR="${ZPDIR}/archive"        ; mkdir -p ${ARDIR}
+	EPDIR="${ZPDIR}/epub"
+	OTDIR="${ZPDIR}/other"
 
-UZcleanu(){
-	cd zipper
-	underscored
+# functs
+	# move things around and rename
+	UZcleanu(){
+		underscored "${OTDIR}"
 
-	for MVFILE in ./* ; do
-		case "$(file --mime-type "$MVFILE" -b)" in
-			application/epub+zip) mkdir -p epub ; mv "$MVFILE" epub ;;
-		esac
-	done
-}
+		for MVFILE in "${OTDIR}"/* ; do
+			case "$(file --mime-type "${MVFILE}" -b)" in
+				application/epub+zip)
+					mkdir -p ${EPDIR} ; mv "${MVFILE}" ${EPDIR}
+					;;
+				*)
+			esac
+		done
+	}
 
-Uzip(){
-	for ARCHIVE in ./* ; do
-		$ASVAR "$ARCHIVE" -o zipper &&
-			mv "$ARCHIVE" zipper/archive
-	done
-}
+	# unzip shit
+	Uzip(){
+		for ARCHIVE in "${DLDIR}"/* ; do
+			${ASVAR} "${ARCHIVE}" -o "${OTDIR}" &&
+				mv "${ARCHIVE}" "${ARDIR}"
+		done
+	}
 
-
-case $1 in
-	"nc"|"--nc")
-		PASS="thatnovelcorner.com"
-		ASVAR="unar -password $PASS"
-		Uzip
-		UZcleanu
-		;;
-
-	"p"|"-p")
-		if [ -z "$2" ] ; then
-			read -r -p 'Password:' PASS
-		else
-			PASS="$2"
-		fi
-		ASVAR="unar -password $PASS"
-		Uzip
-		UZcleanu
-		;;
-
-	*)
-		ASVAR="unar"
-		Uzip
-		UZcleanu
-esac
+# parse args and run
+	case $1 in
+		"nc"|"-nc"|"--nc")
+			PASS="thatnovelcorner.com"
+			ASVAR="unar -password ${PASS}"
+			Uzip
+			UZcleanu
+			;;
+		"p"|"-p"|"--p")
+			if [ -z "$2" ] ; then
+				read -r -p 'Password:' PASS
+			else
+				PASS="${2}"
+			fi
+			ASVAR="unar -password ${PASS}"
+			Uzip
+			UZcleanu
+			;;
+		*)
+			ASVAR="unar"
+			Uzip
+			UZcleanu
+	esac
