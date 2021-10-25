@@ -1,4 +1,5 @@
 #! /bin/bash
+# wraper for lncrawler sot its eaiser to work with
 
 # vars
 	CPURL="$(xclip -selection clipboard -o)"

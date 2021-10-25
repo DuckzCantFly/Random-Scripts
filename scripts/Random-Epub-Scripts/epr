@@ -1,4 +1,5 @@
 #! /bin/sh
+# read epubs fron the cmdline
 
 # Storage dir:
 	EPUBSTORAGE="$XDG_DATA_HOME/epr"

@@ -1,13 +1,16 @@
 #! /bin/sh
+# repacker for epubs to make them play more nicly
 
 # Open last and help
 	[ -z "$1" ] || [ "$1" = "-h" ] && printf '%s\n' \
 	'| $1 = "file"     = "Repack File"		    |'\
 	'| $1 = "--fp" 	   = "Use when providing full path" |'\
 	'| $1 = "-h" or "" = "Show Help"			    |' && exit
+
 # Storage dir:
 	EPUBSTORAGE="/tmp/pubrp"
 	mkdir -p "$EPUBSTORAGE"
+
 # Set up vars
 	[ "$1" = "--fp" ] \
 		&& EPUBPATH="$2" \

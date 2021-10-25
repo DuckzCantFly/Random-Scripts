@@ -1,4 +1,5 @@
 #! /bin/sh
+# little thing to fix my wacam so it only on the priomary moniter
 
 PDSPLY="$(xrandr | grep -w primary | cut -d " " -f1)"
 
