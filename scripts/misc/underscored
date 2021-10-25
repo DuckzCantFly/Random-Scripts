@@ -1,32 +1,47 @@
-#!/bin/bash
+#!/bin/sh
+# A script to underscore contents of dir *now with mostly non shitty code*
 
-# funct
-Unscrer(){
-	for FILESPC in *	; do
-		FILEUND="${FILESPC// /_}"
-		[ "$FILEUND" != "$FILESPC" ] && \
-		if [ -e "$FILEUND" ] ; then
-			echo not renaming \""$FILESPC"\" because \""$FILEUND"\" already exists
-		else
-			mv "$FILESPC" "$FILEUND" && echo moving "$FILESPC" to "$FILEUND"
-		fi
+# parce input & vars
+	TEMP=$(getopt -o 'rRfd' -n underscored -- "$@")
+	eval set -- "${TEMP}"
+	unset TEMP
+	UNDIR="$(
+		echo "${@}" \
+		| sed 's/^\(.*\)\--\(.*\)$/\2/' \
+		| xargs -I % readlink -e %)"
+		echo $UNDIR
+
+
+# figureout the args
+	while true ; do
+		case  $1  in
+			'-f')
+				TYP="-type f"
+				shift ; continue ;;
+			'-d')
+				TYP="-type d"
+				shift ; continue ;;
+			'-r'|'-R')
+				RECSV="-depth"
+				shift ; continue ;;
+			'--') break ;;
+			*)
+		esac
 	done
-}
+
+# fix some dumbshit
+	[ -z "${RECSV}" ] && RECSV="-maxdepth 1"
+	[ -z "${UNDIR}" ] && UNDIR="$(pwd)"
 
 # run
-if [ "$1" = "-R" ] 	; then
+	find "${UNDIR}" -mindepth 1 ${RECSV} ${TYP} -exec sh -c '
+		UNDRRNME="$(dirname "${1}")/$(echo "$(basename "${1}")" | tr -s " " | tr " " "_")"
 
-	SDIR="$(pwd)"
-	NDIRS="$(find -type d .)"
-	for CDIR in $NDIRS ; do
-		cd "$SDIR/$CDIR"
-		# FILENAME=$(echo *)
-		Unscrer
-	done
-elif [ -n "$1" ]	; then
-	# FILENAME="$@"
-	Unscrer
-else
-	# FILENAME=$(ls *)
-	Unscrer
-fi
+		if [ "${UNDRRNME}" != "${1}" ] ; then
+			if [ -e "${UNDRRNME}" ] ; then
+				echo not renaming \""${1}"\" because \""${UNDRRNME}"\" already exists
+			else
+				mv "${1}" "${UNDRRNME}" && echo moving \""${1}"\" to \""${UNDRRNME}"\"
+			fi
+		fi
+	' _ {} \;
