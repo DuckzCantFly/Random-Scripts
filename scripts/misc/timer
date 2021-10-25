@@ -1,4 +1,5 @@
 #! /bin/sh
+# littler desk timer using termdown
 
 # Parse time
 	if [ -z "$1" ]		; then
@@ -10,8 +11,10 @@
 	else
 		TIMER=$(($1+$2*60+$3*3600))
 	fi
+
 # Timer
 	termdown $TIMER | lolcat || exit
+
 # Ending
 	(
 	trap "echo interrupted.; exit 0" INT

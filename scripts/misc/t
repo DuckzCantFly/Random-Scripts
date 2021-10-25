@@ -1,7 +1,10 @@
 #! /bin/sh
+#alias for t command this is not usefull to anyone but me
 
-python /home/share/doc/github/t/t.py --task-dir /home/share/doc/tsk --list tasks $@
+#run t
+	python $GH/t/t.py --task-dir $MGH/notes/tsk --list tasks $@
 
+# update conky
 [ -n "$1" ] && case $@ in
 	"-e"|"--edit=*"|"-f"|"--finish=*"|"-r"|"--remove=*")
 		cpws-reset --reboot-conky & ;;
@@ -10,3 +13,7 @@ python /home/share/doc/github/t/t.py --task-dir /home/share/doc/tsk --list tasks
 		;;
 	*) cpws-reset --reboot-conky &
 esac
+
+# echo "\n asdf" >> do_right_now.md
+# cat do_right_now.md | sed '/^$/d' |wc -l
+# cat do_right_now.md | sed '/^$/d;s/\[//g;s/_/ /g;s/\].*//g'
