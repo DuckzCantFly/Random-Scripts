@@ -1,55 +1,68 @@
 #! /bin/sh
+# auto make, remove or edit shell script
 
+# kill if nothing to do
 [ -z "$1" ] && exit
 
-WKNBIN="$HOME/.local/bin"
-GHDIR="$MGH/Random-Scripts/scripts/"
+# vars
+	WKNBIN="$HOME/.local/bin"
+	GHDIR="$MGH/Random-Scripts/scripts/"
 
-MKsh(){
-	for TNSH in $@ ; do
-		NSH="$WKNBIN/$TNSH"
+# functions
+	# make new script
+	MKsh(){
+		for TNSH in $@ ; do
+			NSH="$WKNBIN/$TNSH"
 
-		if [ -e "$NSH" ] ; then
-			echo "$TNSH already in $WKNBIN"
-			if [ -e "$GHDIR$TNSH" ] ;then
+			if [ -e "$NSH" ] ; then
+				echo "$TNSH already in $WKNBIN"
+				if [ -e "$GHDIR$TNSH" ] ;then
+					echo "$TNSH already in $GHDIR"
+				else
+					echo "Linking $TNSH to $GHDIR$TNSH"
+					ln "$NSH" "$GHDIR"
+				fi
+
+			elif [ -e "$GHDIR$TNSH" ] ;then
 				echo "$TNSH already in $GHDIR"
+				echo "Linking $TNSH to $WKNBIN"
+				ln "$GHDIR/$TNSH" "$WKNBIN"
+
 			else
-				echo "Linking $TNSH to $GHDIR$TNSH"
+				printf '#! /bin/sh\n\n\n' > "$NSH"
+
+				chmod 755 "$NSH"
 				ln "$NSH" "$GHDIR"
+				nvim "$NSH"
+
 			fi
-		elif [ -e "$GHDIR$TNSH" ] ;then
-			echo "$TNSH already in $GHDIR"
-			echo "Linking $TNSH to $WKNBIN"
-			ln "$GHDIR/$TNSH" "$WKNBIN"
-		else
-		printf '#! /bin/sh\n\n\n' > "$NSH"
+		done
+	}
 
-		chmod 755 "$NSH"
-		ln "$NSH" "$GHDIR"
-		nvim "$NSH"
-		fi
-	done
-}
+	# Remove script
+	RMsh(){
+		for TNSH in $@ ; do
+			rm -iv "$WKNBIN/$TNSH" "$GHDIR/$TNSH"
+		done
+	}
 
-RMsh(){
-	for TNSH in $@ ; do
-		rm -iv "$WKNBIN/$TNSH" "$GHDIR/$TNSH"
-	done
-}
-EDsh(){
-	for TNSH in $@ ; do
-		nvim "$WKNBIN/$TNSH"
-	done
-}
+	# edit script
+	EDsh(){
+		for TNSH in $@ ; do
+			nvim "$WKNBIN/$TNSH"
+		done
+	}
 
-MVsh(){
-	mv "$WKNBIN/$1" "$WKNBIN/$2"
-	mv "$GHDIR/$1" "$GHDIR/$2"
-}
+	# move script
+	MVsh(){
+		mv "$WKNBIN/$1" "$WKNBIN/$2"
+		mv "$GHDIR/$1" "$GHDIR/$2"
+	}
 
-case $1 in
-	"-r")	shift ; RMsh "$@" ;;
-	"-m")	shift ; MVsh "$@" ;;
-	"-e")	shift ; EDsh "$@" ;;
-	*)	MKsh "$@"
-esac
+# parse imput and run
+	case $1 in
+		"-r")	shift ; RMsh "$@" ;;
+		"-m")	shift ; MVsh "$@" ;;
+		"-e")	shift ; EDsh "$@" ;;
+		*)	MKsh "$@"
+	esac
