@@ -1,4 +1,5 @@
 #! /bin/sh
+# legicy alias for rm, maybe ill remake it eventually
 
 rm -vI $* && exit
 

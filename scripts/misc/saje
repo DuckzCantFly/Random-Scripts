@@ -1,4 +1,5 @@
 #! /bin/sh
+# a jumiper launch script
 
 # BROWSER='firefox --new-window'
 
