@@ -1,36 +1,5 @@
 #! /bin/sh
-
-# case $1 in
-# 	"-s")	TXTGRB="$(xsel)" 				;;
-# 	"-c")	TXTGRB="$(xclip -selection clipboard -o)" 	;;
-# 	*) exit
-# esac
-
-# TTSLR="/tmp/tts_lastread"
-
-# echo $TXTGRB > $TTSLR-1
-
-# if [ "$2" = "-w" ] 				; then
-# 	[ "$(cat $TTSLR)" = "$(cat $TTSLR-1)" ] && exit
-# 	CTTSCNT=$(pgrep tts | wc -l)
-# 	while [ "$CTTSCNT" -gt "0" ] ; do
-# 		TTSPID="$(pgrep espeak-ng)"
-# 		echo $TTSPID
-# 		tail --pid="$TTSPID" -f /dev/null 2>/dev/null
-# 		CTTSCNT=$(($CTTSCNT-1))
-# 	done
-# elif [ "$(cat $TTSLR)" = "$(cat $TTSLR-1)" ] 	; then
-# 	pkill espeak-ng && exit
-# else
-# 	pkill espeak-ng && sleep .1
-# fi
-
-# echo "$TXTGRB" > "$TTSLR"
-
-# espeak-ng -s 700 "$TXTGRB"
-
-
-####this is the beta code####
+# tts wrapper for espeak
 
 # use slected text or clip board
 	case $1 in
