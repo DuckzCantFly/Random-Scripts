@@ -1,4 +1,5 @@
 #! /bin/sh
+# littler thing to open seletion in firefix i think
 
 PMBROWSER="firefox"
 
