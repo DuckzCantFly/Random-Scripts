@@ -1,0 +1,12 @@
+#! /bin/sh
+# script to add tsks to my notes, idk i need to rlook over this shit
+
+removetsk(){
+	for TRM in $@ ; do
+		TRMNAME=$(grep " | id:$TRM" $MGH/notes/tsk | cut -d '|' -f1 | sed 's/.$//g')
+	done
+}
+
+[ "$1" = "-r" ] && shift &&  && exit
+
+echo "\n$( echo $@ | sed 's/ /_/g' )" >> $MGH/notes/do_right_now.md
