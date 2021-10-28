@@ -1,6 +1,0 @@
-#! /bin/sh
-# little thing to remove extentions
-
-for file in *$1*; do
-    mv -- "$file" "${file%%$1*}"
-done

@@ -1,8 +1,0 @@
-#! /bin/sh
-# littler thing to open seletion in firefix i think
-
-PMBROWSER="firefox"
-
-ARGS="$(xsel)"
-
-$PMBROWSER "$ARGS"

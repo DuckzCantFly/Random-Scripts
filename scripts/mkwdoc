@@ -1,7 +1,0 @@
-#! /bin/sh
-# convert sites into text and open therm in vim
-
-CPURL=$(xclip -selection clipboard -o)
-
-readable -l force -p text-content "$CPURL" | nvim
-readable -l force -p html-content "$CPURL" | nvim
