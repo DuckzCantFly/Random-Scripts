@@ -1,7 +1,7 @@
 # Random-Scripts
 A collection of random scripts I use on my computer.
 
-# Epub/Ebook Stuff 
+# Epub/Ebook Stuff
 
 ## epr
 Vary basic epub viewer for the terminal using epub2txt and less. This script breaks with spaces in file names, so use underscores instead and the script here named underscored can help with that!
@@ -49,7 +49,7 @@ Script needed for bgctimer.
 
 ## setbg
 Modified versions of luke smiths setbg, with better ricing capability
-Also uses gplv3 kus luke smith is retarded and has horrible taste in license 
+Also uses gplv3 kus luke smith is retarded and has horrible taste in license
 
 
 # Misc
@@ -93,20 +93,20 @@ A very simple timer using termdown
 ## sfs
 Awesome wrapper for sshfs that lets you quickly mount and unmount known remote file systems quickly
 ### usage
-	no argument, start/restart all remote file systems 
+	no argument, start/restart all remote file systems
 	-k kill running remote file systems and unmount them
 	$1,$2,$n add new remote file system listed in ~/.ssh/config
 ### Requires:
 	* sshfs
 	* procps-ng
 
-## mksh 
+## mksh
 Bootstrapping script for writing shell scripts
 
 ## rmd
 Crappy wrapper for rm and rmdir, I don't even use, keep it for nostalgia, maybe I'll fix it one day
 
-## se 
+## se
 Scrip I stole from a Luke Smith vid and modified, so probably maybe might use a different license, I don't know or care, it's a wrapper for fzf. I would die without this on my computer.
 
 ## tts
