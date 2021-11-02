@@ -1,8 +1,0 @@
-#! /bin/sh
-# copies a files path small self explanatory
-
-[ -z "$1" ] && exit
-
-CPFILE="$@"
-
-readlink -f "$CPFILE" | tr -d '\n' | xclip -selection clipboard
