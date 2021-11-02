@@ -2,9 +2,11 @@
 # A script to underscore contents of dir *now with mostly non shitty code*
 
 # parce input & vars
+	# parse the argumants
 	TEMP=$(getopt -o 'rRfd' -n underscored -- "$@")
 	eval set -- "${TEMP}"
 	unset TEMP
+	#parce the dir name
 	UNDIR="$(
 		echo "${@}" \
 		| sed 's/^\(.*\)\--\(.*\)$/\2/' \
@@ -30,10 +32,10 @@
 	done
 
 # fix some dumbshit
-	[ -z "${RECSV}" ] && RECSV="-maxdepth 1"
-	[ -z "${UNDIR}" ] && UNDIR="$(pwd)"
+	[ -z "${RECSV}" ] && RECSV="-maxdepth 1"  # add max depth to find if not set
+	[ -z "${UNDIR}" ] && UNDIR="$(pwd)"       # set dir to pwd if not det for find
 
-# run
+# run - rinde  everything and replace its names with underscores
 	find "${UNDIR}" -mindepth 1 ${RECSV} ${TYP} -exec sh -c '
 		UNDRRNME="$(dirname "${1}")/$(echo "$(basename "${1}")" | tr -s " " | tr " " "_")"
 
