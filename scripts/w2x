@@ -1,36 +1,61 @@
 #! /bin/sh
 #dmenue/sxiv w2x script for batch upscaling
 
-#vars
-	FNAME="$(basename "$1")"
-	FDIR="$(dirname -- "$1")"
-	CTNAME="$(echo $FNAME | rev | cut -d '.' -f 2-| rev)"
-	# opts for dmenu  , could probaly make this less ugly with a for loop orsomthing, but this is easier
-	TLIST="done\n2x-1n\n2x0n\n2x1n\n2x2n\n2x3n\n4x-1n\n4x0n\n4x1n\n4x2n\n4x3n\n8x-1n\n8x0n\n8x1n\n8x2n\n8x3n\n16x-1n\n16x0n\n16x1n\n16x2n\n16x3n\n32x-1n\n32x0n\n32x1n\n32x2n\n32x3n\n1x-1n\n1x0n\n1x1n\n1x2n\n1x3n"
+# This script uses the waifu2x-ncnn-vulkan upscaler to create multiple versions of an image with
+# different scaling and noise reduction levels.
+#
+# The user is prompted to select the desired options using dmenu, and the upscaled versions are
+# then created and saved in the same directory as the original image.
+#
+# The original image is then moved to a new ".2x_archive" directory, and the upscaled versions
+# are displayed using sxiv for inspection and cleanup.
 
-#main shit
-	## grab versions
-	while [ "$(echo $VERS | rev | cut -d ' ' -f1 | rev)" != "done" ] ; do
-		VERS="$VERS $(printf "$TLIST" \
-			| dmenu -r -p "Chose which versions to make and select 'done' when complete")"
-	done
+# Vars
+filename="$(basename "$1")"
+dirname="$(dirname -- "$1")"
+# Get the base name of the file (without the file extension)
+base_name="$(printf "${filename}" | rev | cut -d '.' -f 2-| rev)"
+# List of options to choose from using dmenu
+options="done\n2x-1n\n2x0n\n2x1n\n2x2n\n2x3n\n4x-1n\n4x0n\n4x1n\n4x2n\n4x3n\n8x-1n\n8x0n\n8x1n\n8x2n\n8x3n\n16x-1n\n16x0n\n16x1n\n16x2n\n16x3n\n32x-1n\n32x0n\n32x1n\n32x2n\n32x3n\n1x-1n\n1x0n\n1x1n\n1x2n\n1x3n"
 
-	#do all the upscaling
-	for OPTS in $(printf '%s' "$VERS") ; do
-		# check if everything is done
-		[ "$OPTS" = "done" ] && notify-send "Finished making versions" && break
 
-		notify-send "Working on $OPTS"
+# Prompt the user to select which versions to create using dmenu
+# and return the selected options
+function grab_versions() {
+  selected_options=""
+  while [ "$(printf "${selected_options}" | rev | cut -d ' ' -f1 | rev)" != "done" ]; do
+    # Ask user to select which versions to create using dmenu
+    selected_options="$selected_options $(printf "${options}" \
+      | dmenu -r -p "Chose which versions to make and select 'done' when complete")"
+  done
+  printf "${selected_options}"
+}
 
-		# format everything and put in vars
-		MULT="$(echo $OPTS | cut -d 'x' -f1 -)"
-		NOISE="$(echo $OPTS | cut -d 'x' -f2 - | cut -d 'n' -f1 -)"
-		NWNAME=""$CTNAME"_"$OPTS".png"
+# Upscale the image using the selected options
+function do_upscaling() {
+  for opts in $(printf '%s' "${1}"); do
+    # Check if done
+    [ "${opts}" = "done" ] && notify-send "Finished making versions" && break
 
-		# run upscaler
-		waifu2x-ncnn-vulkan -i "$FDIR/$FNAME" -n $NOISE -s $MULT -f png -o "$FDIR/$NWNAME"
-	done
+    notify-send "Working on ${opts}"
 
-	# inspect and clean
-	mkdir -p $FDIR/.2x_archive
-	sxiv $FDIR/$CTNAME* && mv $FDIR/$FNAME $FDIR/.2x_archive
+    # Format options and put in vars
+    multiplier="$(printf "${opts}" | cut -d 'x' -f1 -)"
+    noise_level="$(printf "${opts}" | cut -d 'x' -f2 - | cut -d 'n' -f1 -)"
+    new_name="${base_name}_${opts}.png"
+
+    # Run upscaler
+    waifu2x-ncnn-vulkan -i "${dirname}/${filename}" -n ${noise_level} -s ${multiplier} -f png -o "${dirname}/${new_name}"
+  done
+}
+
+# Inspect and clean
+function inspect_and_clean() {
+  mkdir -p ${dirname}/.2x_archive
+  sxiv ${dirname}/${base_name}* \
+    && mv ${dirname}/${filename} ${dirname}/.2x_archive
+}
+
+selected_options="$(grab_versions)"
+do_upscaling "${selected_options}"
+inspect_and_clean
