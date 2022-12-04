@@ -1,49 +1,82 @@
 #!/bin/sh
-# A script to underscore contents of dir *now with mostly non shitty code*
 
-# parce input & vars
-	# parse the argumants
-	TEMP=$(getopt -o 'rRfd' -n underscored -- "$@")
-	eval set -- "${TEMP}"
-	unset TEMP
-	#parce the dir name
-	UNDIR="$(
-		echo "${@}" \
-		| sed 's/^\(.*\)\--\(.*\)$/\2/' \
-		| xargs -I % readlink -e %)"
-		echo $UNDIR
+# This script renames files and directories in a specified directory with underscores.
+#
+# The following arguments can be used to customize the behavior of the script:
+#   -f: Only rename files (skip directories)
+#   -d: Only rename directories (skip files)
+#   -r: Rename files and directories recursively (includes subdirectories)
+#
+# If no arguments are provided, the script will rename files and directories in the
+# current directory (excluding subdirectories) by default.
 
+# Main function that calls other functions
+main() {
+  parse_arguments "$@"
+  find_and_rename
+}
 
-# figureout the args
-	while true ; do
-		case  $1  in
-			'-f')
-				TYP="-type f"
-				shift ; continue ;;
-			'-d')
-				TYP="-type d"
-				shift ; continue ;;
-			'-r'|'-R')
-				RECSV="-depth"
-				shift ; continue ;;
-			'--') break ;;
-			*)
-		esac
-	done
+# Parse arguments
+parse_arguments() {
+  temp=$(getopt -o 'rRfd' -n underscored -- "$@")
+  eval set -- "${temp}"
+  unset temp
 
-# fix some dumbshit
-	[ -z "${RECSV}" ] && RECSV="-maxdepth 1"  # add max depth to find if not set
-	[ -z "${UNDIR}" ] && UNDIR="$(pwd)"       # set dir to pwd if not det for find
+  # Parse directory name
+  dir_name="$(echo "$@" | sed 's/^\(.*\)\--\(.*\)$/\2/' | xargs -I % readlink -e %)"
+  echo "${dir_name}"
 
-# run - rinde  everything and replace its names with underscores
-	find "${UNDIR}" -mindepth 1 ${RECSV} ${TYP} -exec sh -c '
-		UNDRRNME="$(dirname "${1}")/$(echo "$(basename "${1}")" | tr -s " " | tr " " "_")"
+  # Figure out arguments
+  while true; do
+    case $1 in
+      '-f')
+        file_type="-type f"
+        shift
+        continue
+        ;;
+      '-d')
+        file_type="-type d"
+        shift
+        continue
+        ;;
+      '-r'|'-R')
+        recursive="-depth"
+        shift
+        continue
+        ;;
+      '--')
+        break
+        ;;
+      *)
+    esac
+  done
 
-		if [ "${UNDRRNME}" != "${1}" ] ; then
-			if [ -e "${UNDRRNME}" ] ; then
-				echo not renaming \""${1}"\" because \""${UNDRRNME}"\" already exists
-			else
-				mv "${1}" "${UNDRRNME}" && echo moving \""${1}"\" to \""${UNDRRNME}"\"
-			fi
-		fi
-	' _ {} \;
+  # Set defaults for unset variables
+  [ -z "${recursive}" ] && recursive="-maxdepth 1"
+  [ -z "${dir_name}" ] && dir_name="$(pwd)"
+}
+
+# Function to rename file or directory with underscores
+rename_with_underscores() {
+  # Create new name with underscores
+  new_name="$(dirname "${1}")/$(echo "$(basename "${1}")" | tr -s " " | tr " " "_")"
+
+  # Only rename if the new name is different from the old name
+  if [ "${new_name}" != "${1}" ]; then
+    # Don't rename if the new name already exists
+    if [ -e "${new_name}" ]; then
+      echo not renaming "${1}" because "${new_name}" already exists
+    else
+      # Rename file or directory
+      mv "${1}" "${new_name}" && echo moving "${1}" to "${new_name}"
+    fi
+  fi
+}
+
+# Find and rename everything with underscores
+find_and_rename() {
+  find "${dir_name}" -mindepth 1 ${recursive} ${file_type} -exec sh -c 'rename_with_underscores "${1}"' _ {} \;
+}
+
+# Call main function
+main "$@"
