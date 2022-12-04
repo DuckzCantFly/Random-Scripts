@@ -1,56 +1,60 @@
 #!/bin/sh
 
 # This script does the following:
-#	Run by itself, set the wallpaper (at X start).
-#	If given a file, set that as the new wallpaper.
-#	If given a directory, choose random file in it.
-#	If wal is installed, also generates a colorscheme.
+#   Run by itself, set the wallpaper (at X start).
+#   If given a file, set that as the new wallpaper.
+#   If given a directory, choose a random file in it.
+#   If wal is installed, also generates a colorscheme.
 
-# Location of link to wallpaper link.
+# Location of the link to the wallpaper.
+bg_link="$XDG_DATA_HOME/bg"
 
-BGLOC="$XDG_DATA_HOME/bg"
+# Set the wallpaper to the given file.
+if [ -f "$1" ]; then
+  ln -sf "$(readlink -f "$1")" "$bg_link"
+  notify-send -i "$bg_link" "Changing wallpaper..."
+fi
 
-# wallpaper is file
-[ -f "$1" ] \
-	&& ln -sf "$(readlink -f "$1")" "$BGLOC" \
-	&& notify-send -i "$BGLOC" "Changing wallpaper..."
+# Set the wallpaper to a random file in the given directory.
+if [ -d "$1" ]; then
+  ln -sf "$(find "$(readlink -f "$1")" -iregex '.*.\(jpg\|jpeg\|png\|gif\)' -type f | shuf -n 1)" "$bg_link"
+  notify-send -i "$bg_link" "Random wallpaper chosen."
+fi
 
-# wallpaper is random file in dir
-[ -d "$1" ] \
-	&& ln -sf "$(find "$(readlink -f "$1")" -iregex '.*.\(jpg\|jpeg\|png\|gif\)' -type f | shuf -n 1)" "$BGLOC" \
-	&& notify-send -i "$BGLOC" "Random Wallpaper chosen."
+# Use pywal if it is installed.
+if command -v wal >/dev/null 2>&1; then
+  wal -i "$(readlink -f "$bg_link")" -o "${XDG_CONFIG_HOME:-$HOME/.config}/wal/postrun" >/dev/null 2>&1
+fi
 
+# Press the "super+F12" keys if dwm is running.
+if pidof dwm >/dev/null; then
+  xdotool key super+F12
+fi
 
-# If pywal is installed, use it.
-	wal -i "$(readlink -f "$BGLOC")" -o "${XDG_CONFIG_HOME:-$HOME/.config}/wal/postrun" >/dev/null 2>&1
+# Get the correct scaling for the wallpaper on each connected display.
+for display in $(xrandr | grep " connected " | cut -d ' ' -f1); do
+  resolution="$(xrandr | awk '{
+    if(/^'$display'/) {
+      print $0;
+      m="t";
+    } else if(m == "t"){
+      if (/^[a-zA-Z]/){
+        exit
+      } else {
+        print $0
+      }
+    }
+  }' | grep '*' | cut -d ' ' -f4)"
+  width="$(echo "$resolution" | cut -d 'x' -f1)"
+  height="$(echo "$resolution" | cut -d 'x' -f2)"
 
-# honestly idfk
-	pidof dwm >/dev/null && xdotool key super+F12
-
-# get correct scaling
-for DSPLY in $(xrandr | grep " connected " | cut -d ' ' -f1) ; do
-	PDREZ="$(xrandr | awk '{
-			if(/^'$DSPLY'/) {
-				print $0;
-				m="t";
-			} else if(m == "t"){
-				if (/^[a-zA-Z]/){
-				        exit
-				} else {
-				        print $0
-				}
-			}
-		}' | grep '*' | cut -d ' ' -f4)"
-	PDWTH="$(echo "$PDREZ" | cut -d 'x' -f1)"
-	PDHGT="$(echo "$PDREZ" | cut -d 'x' -f2)"
-
-	BGDIM=$(identify -format "%w %h" "${BGLOC}")
-	if [ "$(echo $BGDIM | cut -d ' ' -f1)" -ge "$PDWTH" -a "$(echo $BGDIM | cut -d ' ' -f2)" -ge "$PDHGT" ] ; then
-		XWPARG="$XWPARG --output $DSPLY --zoom $BGLOC"
-	else
-		XWPARG="$XWPARG --output $DSPLY --maximize $BGLOC"
-	fi
+  bg_dim=$(identify -format "%w %h" "${bg_link}")
+  if [ "$(echo $bg_dim | cut -d ' ' -f1)" -ge "$width" -a "$(echo $bg_dim | cut -d ' ' -f2)" -ge "$height" ]; then
+    xw_arg="$xw_arg --output $display --zoom $bg_link"
+  else
+    xw_arg="$xw_arg --output $display --maximize $bg_link"
+  fi
 done
 
-# run
-	xwallpaper $XWPARG
+# Set the wallpaper using the calculated arguments.
+xwallpaper $xw_arg
