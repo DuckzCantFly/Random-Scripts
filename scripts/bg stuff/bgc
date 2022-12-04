@@ -1,45 +1,62 @@
-#! /bin/sh
-# changes wallpaper based on time
+#!/bin/sh
 
-# Kill old time
-	pkill bgctimer
+# Kill the old timer
+pkill bgctimer
 
-# grab the time
-	## | DN=Hour | TY=Month | DM=Date | MN=Minute |
-	DN=$(date '+%-H')
-	TY=$(date '+%-m')
-	DM=$(date '+%-e')
-	MN=$(date '+%-M')
+# Get the current hour, month, date, and minute
+hour=$(date '+%-H')
+month=$(date '+%-m')
+date=$(date '+%-e')
+minute=$(date '+%-M')
 
-# Time of year
-case $TY in
-	1|2) 	SZN='wntr'	;;
-	3|4|5)	SZN='sprg'	;;
-	6|7|8)	SZN='sumr'	;;
-	9|11)	SZN='fall'	;;
-	10)	SZN='hldy/hlwn' ;;
-	12)	[ $DM -lt 25 ] \
-			&& SZN='hldy/crms' \
-			|| SZN='wntr'	;;
-	*) echo "$TY not a valid season" ; exit
+# Determine the season based on the month
+case $month in
+    1|2)  season='wntr' ;;
+    3|4|5) season='sprg' ;;
+    6|7|8) season='sumr' ;;
+    9|11)  season='fall' ;;
+    10)    season='hldy/hlwn' ;;
+    12)    if [ $date -lt 25 ]; then
+                season='hldy/crms'
+            else
+                season='wntr'
+            fi
+            ;;
+    *)     echo "$month is not a valid month" ; exit 1
 esac
 
-# Find current 1/4 and set vars
-case $DN in
-	0|1|2)
-		VBG=nbg && TETBG=$(( (4-$DN)*60-$MN ))	;;
-	3|4|5|6|7|8)
-		VBG=mbg && TETBG=$(( (9-$DN)*60-$MN ))	;;
-	9|10|11|12|13|14|15)
-		VBG=dbg && TETBG=$(( (16-$DN)*60-$MN ))	;;
-	16|17|18|19)
-		VBG=ebg && TETBG=$(( (20-$DN)*60-$MN ))	;;
-	20|21|22|23)
-		VBG=nbg && TETBG=$(( (28-$DN)*60-$MN ))	;;
-	*) echo "$DN not a valid time" ; exit
-esac
+# Determine the time of day and set the variables
+if [ $hour -ge 0 ] && [ $hour -lt 3 ]; then
+    # Night time
+    vbg='nbg'
+    time_until_next_bg=$(( (4-$hour)*60-$minute ))
+elif [ $hour -ge 3 ] && [ $hour -lt 9 ]; then
+    # Morning
+    vbg='mbg'
+    time_until_next_bg=$(( (9-$hour)*60-$minute ))
+elif [ $hour -ge 9 ] && [ $hour -lt 16 ]; then
+    # Daytime
+    vbg='dbg'
+    time_until_next_bg=$(( (16-$hour)*60-$minute ))
+elif [ $hour -ge 16 ] && [ $hour -lt 20 ]; then
+    # Evening
+    vbg='ebg'
+    time_until_next_bg=$(( (20-$hour)*60-$minute ))
+elif [ $hour -ge 20 ] && [ $hour -lt 24 ]; then
+    # Night time
+    vbg='nbg'
+    time_until_next_bg=$(( (24-$hour)*60-$minute ))
+else
+    echo "$hour is not a valid hour" ; exit 1
+fi
 
-# Run commands
-	[ -n "$1" ] && ln -sf "$(readlink -f "$1")" "$XDG_DATA_HOME/bgc/$SZN/$VBG"
-	setbg "$XDG_DATA_HOME/bgc/$SZN/$VBG"
-	echo $TETBG | bgctimer
+# Link the new background image
+if [ -n "$1" ]; then
+    ln -sf "$(readlink -f "$1")" "$XDG_DATA_HOME/bgc/$season/$vbg"
+fi
+
+# Set the new background image
+setbg "$XDG_DATA_HOME/bgc/$season/$vbg"
+
+# Set the timer for the next background change
+echo $time_until_next_bg | bgctimer
