@@ -1,20 +1,53 @@
-#! /bin/sh
-# legicy alias for rm, maybe ill remake it eventually
+#!/bin/sh
 
-rm -vI $* && exit
+# This script is an alias for the `rm` command, with additional functionality.
+# If the `rm` command fails, the script prompts the user to perform a `rmdir`
+# or `rm -r` operation instead.
 
-echo "Preform "rmdir $*" instead? "
+# Remove the specified files and directories using the `rm` command.
+remove_with_rm() {
+  if rm -vI "$@"; then
+    exit
+  fi
+}
 
-read -r -p '[y/N]: ' RMDYN
+# Remove the specified directories using the `rmdir` command.
+remove_with_rmdir() {
+  echo "Preform \"rmdir $*\" instead? "
+  read -r -p '[y/N]: ' rmdir_answer
 
-[ "$RMDYN" = "${RMDYN#[Yy]}" ] && echo "rmdir $* canceled" && exit
+  if [ "$rmdir_answer" != "${rmdir_answer#[Yy]}" ]; then
+    if rmdir "$@"; then
+      echo "Removed directory"
+      exit
+    fi
+  fi
+}
 
-rmdir $* && echo "Removed Directory"  && exit
+# Remove the specified files and directories, along with their contents, using
+# the `rm -r` command.
+remove_with_rm_r() {
+  echo "Preform \"rm -r $*\"  insted? "
+  read -r -p '[y/N]: ' rm_r_answer
 
-echo "Preform "rm -r $*"  insted? "
+  if [ "$rm_r_answer" != "${rm_r_answer#[Yy]}" ]; then
+    if rm -r "$@"; then
+      echo "Removed directory and contents"
+      exit
+    fi
+  fi
+}
 
-read -r -p '[y/N]: ' RMRYN
+# Attempt to remove the specified files and directories with the `rm` command.
+remove_with_rm "$@"
 
-[ "$RMRYN" != "${RMRYN#[Yy]}" ] && rm -r $* && echo "Removed Directory and Contsents"  && exit
+# If the `rm` operation failed, prompt the user to perform a `rmdir` operation.
+remove_with_rmdir "$@"
 
+# If the `rmdir` operation failed or was not performed, prompt the user to
+# perform a `rm -r` operation instead.
+remove_with_rm_r "$@"
+
+# If the `rm -r` operation failed or was not performed, inform the user that
+# the script has been canceled.
 echo "rm -r $* canceled"
