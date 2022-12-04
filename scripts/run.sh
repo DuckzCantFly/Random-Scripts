@@ -15,10 +15,16 @@ make_nw_executable() {
 	[ -x "$1/nw" ] && chmod +x "$1/nw"
 }
 
+# Find version what of nw to use
 find_perfered_version() {
+	# Check for the latest tag of NW.js
 	# local latest_tag=$(curl -s https://api.github.com/repos/nwjs/nw.js/tags | jq -r '.[0].name')
 	local latest_tag=$(curl -s https://api.github.com/repos/nwjs/nw.js/tags | grep "name" | cut -d '"' -f 4 | head -n 1)
+	
+	# Extract the version number from the tag	
 	local latest_version=$(echo "$latest_tag" | cut -d 'v' -f 2)
+	
+	# Check if the game has a "package.json" file
 	if [ -f "$1/package.json" ]; then
 		# Extract the preferred version of NW.js from the "package.json" file
 		echo $(cat "$1/package.json" | grep "nwjs-sdk-v" | cut -d '"' -f 4 | cut -d '-' -f 3)
@@ -26,8 +32,8 @@ find_perfered_version() {
 		# Use the latest version of NW.js if no "package.json" file is found
 		echo $latest_version
 	fi
-
 }
+
 # Download the preferred version of NW.js
 download_nwjs() {
 	if [ ! -f "$1/nwjs-$2-linux-x64/nw" ]; then
