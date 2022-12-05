@@ -10,11 +10,6 @@ set_game_directory() {
 	fi
 }
 
-# Make sure the "nw" file is executable
-make_nw_executable() {
-	[ -x "$1/nw" ] && chmod +x "$1/nw"
-}
-
 # Find version what of nw to use
 find_perfered_version() {
 	# Check for the latest tag of NW.js
@@ -43,6 +38,11 @@ download_nwjs() {
 	fi
 	# Set the path to the NW.js runtime
 	echo "$1/nwjs-$2-linux-x64/nw"
+}
+
+# Make sure the "nw" file is executable
+make_nw_executable() {
+	[ -x "$1" ] && chmod +x "$1"
 }
 
 # Generate the font configuration file
@@ -79,11 +79,17 @@ run_game() {
 
 # Main function
 main() {
+	# Set $game_directory to proper location
 	local game_directory=$(set_game_directory "$1")
-	make_nw_executable "$game_directory"
+	# Find the proper version for game
 	local preferred_version=$(find_perfered_version "$game_directory")
+	# Download new proper verserion of nw.js
 	local nwjs_bin=$(download_nwjs "$game_directory" "$preferred_version")
-	generate_font_config "$game_directory"
+	# Make sure nw is can be exuted
+	make_nw_executable "$game_directory"
+	# Set up font config
+	generate_font_config "$nwjs_bin"
+	# Run the game
 	run_game "$game_directory" "$nwjs_bin"
 }
 
